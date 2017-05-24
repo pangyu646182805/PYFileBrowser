@@ -6,6 +6,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.view.ViewTreeObserver;
 
 import com.neuroandroid.pyfilebrowser.R;
@@ -123,6 +124,9 @@ public abstract class BaseRecyclerViewFragment<ADAPTER extends SelectAdapter, LM
         });
     }
 
+    /**
+     * 检查RecyclerView是否为空
+     */
     private void checkIsEmpty() {
         if (mLoadingLayout != null) {
             if (mAdapter == null || mAdapter.getItemCount() == 0) {
@@ -185,8 +189,19 @@ public abstract class BaseRecyclerViewFragment<ADAPTER extends SelectAdapter, LM
     @NonNull
     protected abstract ADAPTER createAdapter();
 
+    /**
+     * 去目的地
+     */
     @Override
     public void toDest(int position, ClassifyBean classifyBean) {
+        // 交给子类去实现
+    }
 
+    protected void showRecyclerView() {
+        mRvFile.setVisibility(View.VISIBLE);
+    }
+
+    protected void hideRecyclerView() {
+        mRvFile.setVisibility(View.GONE);
     }
 }

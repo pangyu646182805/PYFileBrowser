@@ -4,14 +4,26 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 
 import com.neuroandroid.pyfilebrowser.adapter.base.SelectAdapter;
-import com.neuroandroid.pyfilebrowser.base.BaseRecyclerViewFragment;
+import com.neuroandroid.pyfilebrowser.base.BaseRecyclerViewGridSizeFragment;
 import com.neuroandroid.pyfilebrowser.bean.ClassifyBean;
+import com.neuroandroid.pyfilebrowser.loader.FileLoader;
 
 /**
  * Created by NeuroAndroid on 2017/5/23.
  */
 
-public class ClassifyFragment extends BaseRecyclerViewFragment {
+public class ClassifyFragment extends BaseRecyclerViewGridSizeFragment {
+    private static final String[][] FILE_FILTER = {{"mp3"}, {"mp4"}, {"jpg", "png"},
+            {"txt", "html", "doc"}, {"apk"}, {"zip", "tar", "rar"}};
+    public static final int CLASSIFY_AUDIO = 0;
+    public static final int CLASSIFY_VIDEO = 1;
+    public static final int CLASSIFY_PHOTO = 2;
+    public static final int CLASSIFY_DOC = 3;
+    public static final int CLASSIFY_APK = 4;
+    public static final int CLASSIFY_ZIP = 5;
+    public static final int CLASSIFY_DOWNLOAD = 6;
+    public static final int CLASSIFY_COLLECTION = 7;
+
     @Override
     protected RecyclerView.LayoutManager createLayoutManager() {
         return null;
@@ -25,7 +37,8 @@ public class ClassifyFragment extends BaseRecyclerViewFragment {
 
     @Override
     public void toDest(int position, ClassifyBean classifyBean) {
-
+        new FileLoader(mContext, position).setCallBack(classifyFileBeanDataList -> {
+        }).execute(FILE_FILTER[position]);
     }
 
     @Override
