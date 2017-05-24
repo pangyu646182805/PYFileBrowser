@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.neuroandroid.pyfilebrowser.bean.ClassifyFileBean;
+import com.neuroandroid.pyfilebrowser.ui.fragment.ClassifyFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +39,9 @@ public class PYFileStore extends SQLiteOpenHelper {
 
     }
 
+    /**
+     * 单例模式
+     */
     @NonNull
     public static synchronized PYFileStore getInstance(@NonNull final Context context) {
         if (sInstance == null) {
@@ -46,12 +50,18 @@ public class PYFileStore extends SQLiteOpenHelper {
         return sInstance;
     }
 
+    /**
+     * 创建表格
+     */
     private void createTable(@NonNull final SQLiteDatabase db, final String tableName) {
         String sql = "create table " + tableName + " (_id integer primary key autoincrement, title varchar(20) not null, " +
                 "path string not null, size long not null, date long not null, classifyFlag int not null)";
         db.execSQL(sql);
     }
 
+    /**
+     * 添加classifyFileBean到数据库
+     */
     public synchronized void addItem(ClassifyFileBean classifyFileBean) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -64,6 +74,10 @@ public class PYFileStore extends SQLiteOpenHelper {
         db.close();
     }
 
+    /**
+     * @param classifyFlag {@link ClassifyFragment#CLASSIFY_AUDIO}...
+     * @return 根据classifyFlag返回文件列表
+     */
     public List<ClassifyFileBean> getClassifyFileDataList(int classifyFlag) {
         Cursor cursor = getReadableDatabase().query(TABLE_NAME, null,
                 "classifyFlag=?", new String[]{classifyFlag + ""}, null, null, null);
@@ -81,6 +95,10 @@ public class PYFileStore extends SQLiteOpenHelper {
         return dataList;
     }
 
+    /**
+     * @param classifyFlag : 如果此值为-1则返回所有的数量
+     * @return 根据classifyFlag返回文件列表的数量 {@link ClassifyFragment#CLASSIFY_AUDIO}...
+     */
     public int getClassifyFileDataListSize(int classifyFlag) {
         Cursor cursor;
         if (classifyFlag == -1) {

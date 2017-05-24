@@ -20,9 +20,12 @@ import java.util.List;
  */
 public class FileLoader extends AsyncTask<String, Void, Void> {
     private int mClassifyFlag;
+    // 文件过滤器
     private PYFileFilter mPYFileFilter;
     private Context mContext;
+    // 数据库
     private PYFileStore mPYFileStore;
+    // 符合条件的文件列表
     private List<ClassifyFileBean> mClassifyFileBeanDataList;
 
     public FileLoader(Context context, int classifyFlag) {
@@ -30,6 +33,9 @@ public class FileLoader extends AsyncTask<String, Void, Void> {
         mClassifyFlag = classifyFlag;
     }
 
+    /**
+     * AsyncTask异步任务的初始化
+     */
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
@@ -37,6 +43,9 @@ public class FileLoader extends AsyncTask<String, Void, Void> {
         mClassifyFileBeanDataList = new ArrayList<>();
     }
 
+    /**
+     * AsyncTask异步任务
+     */
     @Override
     protected Void doInBackground(String... strings) {
         mPYFileFilter = new PYFileFilter(strings);
@@ -44,6 +53,9 @@ public class FileLoader extends AsyncTask<String, Void, Void> {
         return null;
     }
 
+    /**
+     * AsyncTask异步任务结束的回调
+     */
     @Override
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
@@ -56,6 +68,10 @@ public class FileLoader extends AsyncTask<String, Void, Void> {
         }
     }
 
+    /**
+     * 递归实现搜索文件系统
+     * PYFileFilter : 文件过滤器 {@link PYFileFilter}
+     */
     private void getFiles(File file) {
         File[] files = file.listFiles(mPYFileFilter);
         for (File f : files) {
@@ -82,10 +98,16 @@ public class FileLoader extends AsyncTask<String, Void, Void> {
         return this;
     }
 
+    /**
+     * 文件加载的回调接口
+     */
     public interface CallBack {
         void onPostExecute(List<ClassifyFileBean> classifyFileBeanDataList);
     }
 
+    /**
+     * 保存文件列表
+     */
     private class AsyncFileSaver extends AsyncTask<List<ClassifyFileBean>, Void, Void> {
         @Override
         protected Void doInBackground(List<ClassifyFileBean>... lists) {
