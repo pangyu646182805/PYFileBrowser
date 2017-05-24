@@ -12,4 +12,6 @@
 
     <string name="classify">分类</string>
     <string name="storage">存储</string>
+
+    <string name="empty">空</string>
 </resources>

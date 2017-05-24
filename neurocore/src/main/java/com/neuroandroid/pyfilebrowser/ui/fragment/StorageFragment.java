@@ -1,20 +1,35 @@
 package com.neuroandroid.pyfilebrowser.ui.fragment;
 
-import com.neuroandroid.pyfilebrowser.R;
-import com.neuroandroid.pyfilebrowser.base.BaseFragment;
+import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
+
+import com.neuroandroid.pyfilebrowser.adapter.base.SelectAdapter;
+import com.neuroandroid.pyfilebrowser.base.BaseRecyclerViewFragment;
+import com.neuroandroid.pyfilebrowser.bean.ClassifyBean;
 
 /**
  * Created by NeuroAndroid on 2017/5/23.
  */
 
-public class StorageFragment extends BaseFragment {
+public class StorageFragment extends BaseRecyclerViewFragment {
     @Override
-    protected int attachLayoutRes() {
-        return R.layout.fragment_storage;
+    protected RecyclerView.LayoutManager createLayoutManager() {
+        return null;
+    }
+
+    @NonNull
+    @Override
+    protected SelectAdapter createAdapter() {
+        return null;
     }
 
     @Override
-    protected void initView() {
+    public void toDest(int position, ClassifyBean classifyBean) {
 
+    }
+
+    @Override
+    protected int getCurrentFragment() {
+        return STORAGE_FRAGMENT;
     }
 }

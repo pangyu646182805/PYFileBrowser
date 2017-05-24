@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/backgroundPanel"
+    android:foreground="@drawable/rect_selector_strong"
+    android:orientation="horizontal"
+    android:paddingBottom="@dimen/y16"
+    android:paddingLeft="@dimen/x32"
+    android:paddingTop="@dimen/y16">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:src="@mipmap/ic_phone_android"/>
+
+    <com.neuroandroid.pyfilebrowser.widget.NoPaddingTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="@dimen/x16"
+        android:text="手机内存"
+        android:textColor="@color/colorGray333"
+        android:textSize="14sp"/>
+</LinearLayout>
