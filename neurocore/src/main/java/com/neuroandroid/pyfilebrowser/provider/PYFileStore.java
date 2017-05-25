@@ -59,6 +59,12 @@ public class PYFileStore extends SQLiteOpenHelper {
         db.execSQL(sql);
     }
 
+    public void delete(int classifyFlag) {
+        SQLiteDatabase db = getWritableDatabase();
+        db.delete(TABLE_NAME, "classifyFlag=?", new String[]{"" + classifyFlag});
+        db.close();
+    }
+
     /**
      * 添加classifyFileBean到数据库
      */

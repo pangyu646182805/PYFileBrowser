@@ -27,7 +27,7 @@ public class MainActivity extends BaseActivity {
      * 需要动态申请的权限
      */
     private static final String[] PERMISSIONS = new String[]{
-            DangerousPermissions.STORAGE,
+            DangerousPermissions.STORAGE
     };
 
     @BindView(R.id.drawer_layout)
