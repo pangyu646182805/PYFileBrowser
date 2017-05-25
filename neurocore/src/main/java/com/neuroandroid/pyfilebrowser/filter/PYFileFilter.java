@@ -18,8 +18,9 @@ public class PYFileFilter implements FileFilter {
     public boolean accept(File file) {
         if (file.isDirectory()) {
             // 目录层级太大则过滤
-            int length = file.getAbsolutePath().split("/").length - 4;
-            return length <= 3;
+            /*int length = file.getAbsolutePath().split("/").length - 4;
+            return length <= 3;*/
+            return true;
         }
         if (mFileType != null && mFileType.length > 0) {
             for (int i = 0; i < mFileType.length; i++) {

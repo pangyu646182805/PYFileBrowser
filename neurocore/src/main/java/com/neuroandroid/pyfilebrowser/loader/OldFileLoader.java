@@ -63,7 +63,7 @@ public class OldFileLoader extends AsyncTask<String, Void, Void> {
         for (ClassifyFileBean bean : mClassifyFileBeanDataList) {
             // L.e(bean.toString());
         }
-        if (!SetUtils.equals(mPYFileStore.getClassifyFileDataList(mClassifyFlag), mClassifyFileBeanDataList)) {
+        if (!SetUtils.equals(mPYFileStore.getClassifyFileDataList(mContext, mClassifyFlag), mClassifyFileBeanDataList)) {
             L.e("有文件被添加或者删除，去保存文件");
             new AsyncFileSaver().execute(mClassifyFileBeanDataList);
         } else {

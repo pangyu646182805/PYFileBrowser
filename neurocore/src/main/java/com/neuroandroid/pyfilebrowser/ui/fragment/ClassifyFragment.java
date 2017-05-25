@@ -11,14 +11,20 @@ import com.neuroandroid.pyfilebrowser.adapter.ClassifyFileAdapter;
 import com.neuroandroid.pyfilebrowser.base.BaseRecyclerViewGridSizeFragment;
 import com.neuroandroid.pyfilebrowser.bean.ClassifyBean;
 import com.neuroandroid.pyfilebrowser.bean.ClassifyFileBean;
+import com.neuroandroid.pyfilebrowser.event.ClassifyEvent;
 import com.neuroandroid.pyfilebrowser.loader.AudioLoader;
 import com.neuroandroid.pyfilebrowser.loader.FileLoader;
 import com.neuroandroid.pyfilebrowser.loader.PhotoLoader;
 import com.neuroandroid.pyfilebrowser.loader.VideoLoader;
 import com.neuroandroid.pyfilebrowser.loader.WrappedAsyncTaskLoader;
+import com.neuroandroid.pyfilebrowser.provider.PYFileStore;
 import com.neuroandroid.pyfilebrowser.utils.L;
+import com.neuroandroid.pyfilebrowser.utils.SetUtils;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by NeuroAndroid on 2017/5/23.
@@ -35,24 +41,35 @@ public class ClassifyFragment extends BaseRecyclerViewGridSizeFragment<ClassifyF
     public static final int CLASSIFY_ZIP = 5;
     public static final int CLASSIFY_DOWNLOAD = 6;
     public static final int CLASSIFY_COLLECTION = 7;
+    private int mCurrentClassifyFlag = CLASSIFY_AUDIO;
 
     @Override
     protected GridLayoutManager createLayoutManager() {
-        return null;
+        return new GridLayoutManager(mContext, getGridSize());
     }
 
     @NonNull
     @Override
-    protected ClassifyFileAdapter createAdapter() {
-        return null;
+    protected ClassifyFileAdapter createAdapter(ArrayList<ClassifyFileBean> dataList) {
+        return new ClassifyFileAdapter(mContext, dataList, mCurrentClassifyFlag, getItemType());
     }
 
     @Override
     public void toDest(int position, ClassifyBean classifyBean) {
-        if (position <= 5)
-            getParentFragment().getLoaderManager().initLoader(position, null, ClassifyFragment.this);
-        /*new FileLoader(mContext, position).setCallBack(classifyFileBeanDataList -> {
-        }).execute(FILE_FILTER[position]);*/
+        if (position <= 5) {
+            mCurrentClassifyFlag = position;
+            if (position >= 3) {
+                new Thread(() -> {
+                    ArrayList<ClassifyFileBean> classifyFileDataList = PYFileStore.getInstance(mContext).getClassifyFileDataList(mContext, mCurrentClassifyFlag);
+                    mActivity.runOnUiThread(() -> invalidateAdapter(classifyFileDataList));
+                }).start();
+            }
+            if (PYFileStore.getInstance(mContext).getClassifyFileDataListSize(mCurrentClassifyFlag) == 0)
+                showLoading();
+            showRecyclerView();
+            EventBus.getDefault().post(new ClassifyEvent());
+            getParentFragment().getLoaderManager().restartLoader(position, null, ClassifyFragment.this);
+        }
     }
 
     @Override
@@ -67,15 +84,21 @@ public class ClassifyFragment extends BaseRecyclerViewGridSizeFragment<ClassifyF
 
     @Override
     public void onLoadFinished(Loader<ArrayList<ClassifyFileBean>> loader, ArrayList<ClassifyFileBean> data) {
-        L.e("size : " + data.size());
-        for (ClassifyFileBean bean : data) {
-            L.e(bean.toString());
+        hideLoading();
+        if (data != null) {
+            invalidateAdapter(data);
         }
     }
 
     @Override
     public void onLoaderReset(Loader<ArrayList<ClassifyFileBean>> loader) {
+        getAdapter().replaceAll(new ArrayList<>());
+    }
 
+    public void handleBackPress() {
+        getAdapter().replaceAll(new ArrayList<>());
+        hideRecyclerView();
+        hideLoading();
     }
 
     private static class AsyncFileLoader extends WrappedAsyncTaskLoader<ArrayList<ClassifyFileBean>> {
@@ -101,7 +124,20 @@ public class ClassifyFragment extends BaseRecyclerViewGridSizeFragment<ClassifyF
                 default:
                     FileLoader fileLoader = new FileLoader(getContext(), mClassifyFlag);
                     fileLoader.loadFile(FILE_FILTER[mClassifyFlag]);
-                    return fileLoader.getClassifyFileBeanDataList();
+                    ArrayList<ClassifyFileBean> classifyFileBeanDataList = fileLoader.getClassifyFileBeanDataList();
+
+                    List<ClassifyFileBean> classifyFileDataList = PYFileStore.getInstance(getContext()).getClassifyFileDataList(getContext(), mClassifyFlag);
+                    if (!SetUtils.equals(classifyFileDataList, classifyFileBeanDataList)) {
+                        L.e("有文件被添加或者删除，去保存文件");
+                        PYFileStore.getInstance(getContext()).delete(mClassifyFlag);
+                        for (ClassifyFileBean classifyFileBean : classifyFileBeanDataList) {
+                            PYFileStore.getInstance(getContext()).addItem(classifyFileBean);
+                        }
+                        return classifyFileBeanDataList;
+                    } else {
+                        L.e("不需要保存文件到数据库");
+                        return null;
+                    }
             }
         }
     }

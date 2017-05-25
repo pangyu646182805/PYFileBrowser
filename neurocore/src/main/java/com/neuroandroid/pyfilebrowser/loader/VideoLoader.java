@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import com.neuroandroid.pyfilebrowser.bean.ClassifyFileBean;
 import com.neuroandroid.pyfilebrowser.ui.fragment.ClassifyFragment;
 
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -39,10 +40,12 @@ public class VideoLoader {
 
     private static ClassifyFileBean getVideoFromCursorImpl(Cursor cursor) {
         ClassifyFileBean fileBean = new ClassifyFileBean();
+        fileBean.setId(cursor.getInt(cursor.getColumnIndex(BaseColumns._ID)));
         fileBean.setTitle(cursor.getString(cursor.getColumnIndex(MediaStore.Video.VideoColumns.TITLE)));
         fileBean.setPath(cursor.getString(cursor.getColumnIndex(MediaStore.Video.VideoColumns.DATA)));
         fileBean.setSize(cursor.getLong(cursor.getColumnIndex(MediaStore.Video.VideoColumns.SIZE)));
         fileBean.setDate(cursor.getLong(cursor.getColumnIndex(MediaStore.Video.VideoColumns.DATE_MODIFIED)));
+        fileBean.setFile(new File(fileBean.getPath()));
         fileBean.setClassifyFlag(ClassifyFragment.CLASSIFY_VIDEO);
         return fileBean;
     }
@@ -56,7 +59,7 @@ public class VideoLoader {
                             MediaStore.Video.VideoColumns.TITLE,// 1
                             MediaStore.Video.VideoColumns.SIZE,// 2
                             MediaStore.Video.VideoColumns.DATE_MODIFIED,// 3
-                            MediaStore.Video.VideoColumns.DATA,// 5
+                            MediaStore.Video.VideoColumns.DATA// 5
                     }, selection, selectionValues, sortOrder);
         } catch (SecurityException e) {
             return null;

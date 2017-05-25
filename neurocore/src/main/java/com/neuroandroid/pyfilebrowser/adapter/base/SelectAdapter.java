@@ -20,6 +20,9 @@ import java.util.List;
  */
 
 public abstract class SelectAdapter<T extends ISelect, VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<VH> {
+    public static final int TYPE_LIST = 0;
+    public static final int TYPE_GRID = 1;
+    protected int mCurrentType = TYPE_LIST;
     private int mCurrentMode = ISelect.SINGLE_MODE;
     private int mPrePos;
     public boolean isSelectMode = true;

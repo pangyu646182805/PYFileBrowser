@@ -1,16 +1,27 @@
 package com.neuroandroid.pyfilebrowser.bean;
 
+import android.graphics.drawable.Drawable;
+
+import java.io.File;
+
 /**
  * Created by NeuroAndroid on 2017/5/24.
  */
 public class ClassifyFileBean implements ISelect {
     private boolean selected;
 
+    private int id;
     private String title;  // 文件名称
     private String path;  // 文件路径
     private long size;  // 文件大小
     private long date;  // 文件修改时间
     private int classifyFlag;
+    private File file;
+
+    // 音频albumId
+    private int albumId;
+    // apk缩略图
+    private Drawable appIcon;
 
     public ClassifyFileBean() {
     }
@@ -22,6 +33,38 @@ public class ClassifyFileBean implements ISelect {
         this.size = size;
         this.date = date;
         this.classifyFlag = classifyFlag;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public Drawable getAppIcon() {
+        return appIcon;
+    }
+
+    public void setAppIcon(Drawable appIcon) {
+        this.appIcon = appIcon;
+    }
+
+    public int getAlbumId() {
+        return albumId;
+    }
+
+    public void setAlbumId(int albumId) {
+        this.albumId = albumId;
+    }
+
+    public File getFile() {
+        return file;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
     }
 
     public int getClassifyFlag() {

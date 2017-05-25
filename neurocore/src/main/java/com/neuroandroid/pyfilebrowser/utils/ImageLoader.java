@@ -1,5 +1,6 @@
 package com.neuroandroid.pyfilebrowser.utils;
 
+import android.content.ContentUris;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -33,13 +34,13 @@ public class ImageLoader {
         return ImageLoaderHolder.INSTANCE;
     }
 
-
     //直接加载网络图片
     public void displayImage(Context context, String url, int errorResId, ImageView imageView) {
         Glide
                 .with(context)
                 .load(url)
                 .error(errorResId)
+                .placeholder(errorResId)
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .centerCrop()
                 .crossFade()
@@ -104,5 +105,22 @@ public class ImageLoader {
     //将资源ID转为Uri
     public Uri resourceIdToUri(Context context, int resourceId) {
         return Uri.parse(ANDROID_RESOURCE + context.getPackageName() + FOREWARD_SLASH + resourceId);
+    }
+
+    public void displayImageFromAlbumId(Context context, int albumId, int errorResId, ImageView imageView) {
+        Glide
+                .with(context)
+                .load(getMediaStoreAlbumCoverUri(albumId))
+                .error(errorResId)
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .centerCrop()
+                .crossFade()
+                .into(imageView);
+    }
+
+    private Uri getMediaStoreAlbumCoverUri(int albumId) {
+        final Uri sArtworkUri = Uri
+                .parse("content://media/external/audio/albumart");
+        return ContentUris.withAppendedId(sArtworkUri, albumId);
     }
 }

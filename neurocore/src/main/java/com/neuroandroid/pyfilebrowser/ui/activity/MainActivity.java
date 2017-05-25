@@ -9,7 +9,6 @@ import android.support.v4.widget.DrawerLayout;
 
 import com.neuroandroid.pyfilebrowser.R;
 import com.neuroandroid.pyfilebrowser.base.BaseActivity;
-import com.neuroandroid.pyfilebrowser.base.BaseFragment;
 import com.neuroandroid.pyfilebrowser.ui.fragment.MyAppFragment;
 import com.neuroandroid.pyfilebrowser.ui.fragment.MyFileFragment;
 import com.neuroandroid.pyfilebrowser.utils.ShowUtils;
@@ -35,7 +34,7 @@ public class MainActivity extends BaseActivity {
     @BindView(R.id.nav_layout)
     NavigationView mNavLayout;
 
-    private BaseFragment mCurrentFragment;
+    private MainActivityFragmentCallbacks mCurrentFragment;
     private PermissionsHelper mPermissionsHelper;
 
     @Override
@@ -93,7 +92,7 @@ public class MainActivity extends BaseActivity {
      */
     private void setCurrentFragment(@SuppressWarnings("NullableProblems") Fragment fragment) {
         getSupportFragmentManager().beginTransaction().replace(R.id.fl_drawer_container, fragment, null).commit();
-        mCurrentFragment = (BaseFragment) fragment;
+        mCurrentFragment = (MainActivityFragmentCallbacks) fragment;
     }
 
     /**
@@ -130,6 +129,27 @@ public class MainActivity extends BaseActivity {
                 finish();
             }
         });
+    }
+
+    /**
+     * 处理fragment返回事件
+     */
+    public interface MainActivityFragmentCallbacks {
+        boolean handleBackPress();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (!handleBackPress())
+            super.onBackPressed();
+    }
+
+    public boolean handleBackPress() {
+        if (mDrawerLayout.isDrawerOpen(mNavLayout)) {
+            mDrawerLayout.closeDrawers();
+            return true;
+        }
+        return mCurrentFragment != null && mCurrentFragment.handleBackPress();
     }
 
     @Override

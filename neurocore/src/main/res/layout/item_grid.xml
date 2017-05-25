@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.neuroandroid.pyfilebrowser.widget.WidthFitSquareLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/backgroundPanel"
+    android:layout_margin="@dimen/y4"
+    android:foreground="@drawable/rect_selector_strong">
+
+    <ImageView
+        android:id="@+id/iv_img"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:scaleType="centerCrop"
+        tools:background="@mipmap/ic_type_apk"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@color/black_9"
+        android:gravity="left"
+        android:orientation="vertical"
+        android:padding="@dimen/y2">
+
+        <com.neuroandroid.pyfilebrowser.widget.NoPaddingTextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:lines="1"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            tools:text="tingshuo-huazi.aac"/>
+
+        <com.neuroandroid.pyfilebrowser.widget.NoPaddingTextView
+            android:id="@+id/tv_sub_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/y4"
+            android:ellipsize="end"
+            android:lines="1"
+            android:text="2015/3/25"
+            android:textColor="@color/white"
+            android:textSize="12sp"/>
+    </LinearLayout>
+</com.neuroandroid.pyfilebrowser.widget.WidthFitSquareLayout>

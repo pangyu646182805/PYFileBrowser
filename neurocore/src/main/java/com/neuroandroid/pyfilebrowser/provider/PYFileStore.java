@@ -10,9 +10,10 @@ import android.support.annotation.Nullable;
 
 import com.neuroandroid.pyfilebrowser.bean.ClassifyFileBean;
 import com.neuroandroid.pyfilebrowser.ui.fragment.ClassifyFragment;
+import com.neuroandroid.pyfilebrowser.utils.FileUtils;
 
+import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by NeuroAndroid on 2017/5/24.
@@ -84,10 +85,10 @@ public class PYFileStore extends SQLiteOpenHelper {
      * @param classifyFlag {@link ClassifyFragment#CLASSIFY_AUDIO}...
      * @return 根据classifyFlag返回文件列表
      */
-    public List<ClassifyFileBean> getClassifyFileDataList(int classifyFlag) {
+    public ArrayList<ClassifyFileBean> getClassifyFileDataList(Context context, int classifyFlag) {
         Cursor cursor = getReadableDatabase().query(TABLE_NAME, null,
                 "classifyFlag=?", new String[]{classifyFlag + ""}, null, null, null);
-        List<ClassifyFileBean> dataList = new ArrayList<>();
+        ArrayList<ClassifyFileBean> dataList = new ArrayList<>();
         ClassifyFileBean fileBean;
         while (cursor.moveToNext()) {
             fileBean = new ClassifyFileBean();
@@ -95,6 +96,8 @@ public class PYFileStore extends SQLiteOpenHelper {
             fileBean.setPath(cursor.getString(cursor.getColumnIndex("path")));
             fileBean.setSize(cursor.getLong(cursor.getColumnIndex("size")));
             fileBean.setDate(cursor.getLong(cursor.getColumnIndex("date")));
+            fileBean.setAppIcon(FileUtils.getApkIcon(context, fileBean.getPath()));
+            fileBean.setFile(new File(fileBean.getPath()));
             fileBean.setClassifyFlag(classifyFlag);
             dataList.add(fileBean);
         }

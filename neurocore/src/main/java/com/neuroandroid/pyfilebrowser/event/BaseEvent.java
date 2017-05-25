@@ -5,6 +5,7 @@ package com.neuroandroid.pyfilebrowser.event;
  */
 
 public class BaseEvent {
+    public static final int EVENT_CLASSIFY = 200;
     private int eventFlag;
 
     public int getEventFlag() {

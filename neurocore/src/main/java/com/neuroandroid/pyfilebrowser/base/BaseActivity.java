@@ -157,12 +157,6 @@ public abstract class BaseActivity<T extends IBasePresenter> extends AppCompatAc
         }
     }
 
-    protected void setTitleAlpha(float alpha) {
-        if (mTitleBar != null) {
-            mTitleBar.setTitleAlpha(alpha);
-        }
-    }
-
     protected void initTitleBar(View title) {
         if (mTitleBar != null) {
             mTitleBar.setImmersive(mImmersive);

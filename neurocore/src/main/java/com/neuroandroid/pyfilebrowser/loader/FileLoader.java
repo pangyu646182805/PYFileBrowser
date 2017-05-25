@@ -5,6 +5,9 @@ import android.os.Environment;
 
 import com.neuroandroid.pyfilebrowser.bean.ClassifyFileBean;
 import com.neuroandroid.pyfilebrowser.filter.PYFileFilter;
+import com.neuroandroid.pyfilebrowser.ui.fragment.ClassifyFragment;
+import com.neuroandroid.pyfilebrowser.utils.FileUtils;
+import com.neuroandroid.pyfilebrowser.utils.L;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -54,6 +57,10 @@ public class FileLoader {
                 classifyFileBean.setDate(f.lastModified());
                 classifyFileBean.setSize(f.length());
                 classifyFileBean.setClassifyFlag(mClassifyFlag);
+                if (mClassifyFlag == ClassifyFragment.CLASSIFY_APK) {
+                    classifyFileBean.setAppIcon(FileUtils.getApkIcon(mContext, absolutePath));
+                }
+                L.e("absolutePath : " + absolutePath);
                 mClassifyFileBeanDataList.add(classifyFileBean);
             }
         }

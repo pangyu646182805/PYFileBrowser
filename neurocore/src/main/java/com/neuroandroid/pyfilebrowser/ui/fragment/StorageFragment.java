@@ -7,6 +7,8 @@ import com.neuroandroid.pyfilebrowser.adapter.base.SelectAdapter;
 import com.neuroandroid.pyfilebrowser.base.BaseRecyclerViewFragment;
 import com.neuroandroid.pyfilebrowser.bean.ClassifyBean;
 
+import java.util.ArrayList;
+
 /**
  * Created by NeuroAndroid on 2017/5/23.
  */
@@ -19,7 +21,7 @@ public class StorageFragment extends BaseRecyclerViewFragment {
 
     @NonNull
     @Override
-    protected SelectAdapter createAdapter() {
+    protected SelectAdapter createAdapter(ArrayList dataList) {
         return null;
     }
 

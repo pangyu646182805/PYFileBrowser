@@ -14,10 +14,12 @@ import com.neuroandroid.pyfilebrowser.adapter.ClassifyAdapter;
 import com.neuroandroid.pyfilebrowser.adapter.StorageAdapter;
 import com.neuroandroid.pyfilebrowser.adapter.base.SelectAdapter;
 import com.neuroandroid.pyfilebrowser.bean.ClassifyBean;
+import com.neuroandroid.pyfilebrowser.bean.ClassifyFileBean;
 import com.neuroandroid.pyfilebrowser.bean.ISelect;
 import com.neuroandroid.pyfilebrowser.listener.CategoryCallBack;
 import com.neuroandroid.pyfilebrowser.utils.UIUtils;
 import com.neuroandroid.pyfilebrowser.widget.LoadingLayout;
+import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 
 import java.util.ArrayList;
@@ -44,7 +46,7 @@ public abstract class BaseRecyclerViewFragment<ADAPTER extends SelectAdapter, LM
 
     @Nullable
     @BindView(R.id.rv_file)
-    RecyclerView mRvFile;
+    FastScrollRecyclerView mRvFile;
 
     @Nullable
     @BindView(R.id.rv_root)
@@ -63,12 +65,12 @@ public abstract class BaseRecyclerViewFragment<ADAPTER extends SelectAdapter, LM
     protected void initView() {
         if (getCurrentFragment() == CLASSIFY_FRAGMENT) {
             initClassifyRecyclerView();
+            initLayoutManager();
+            initAdapter(new ArrayList<>());
+            setUpRecyclerView();
         } else {
             initStorageRecyclerView();
         }
-        /*initLayoutManager();
-        initAdapter();
-        setUpRecyclerView();*/
     }
 
     /**
@@ -111,8 +113,8 @@ public abstract class BaseRecyclerViewFragment<ADAPTER extends SelectAdapter, LM
         mLayoutManager = createLayoutManager();
     }
 
-    private void initAdapter() {
-        mAdapter = createAdapter();
+    private void initAdapter(ArrayList<ClassifyFileBean> dataList) {
+        mAdapter = createAdapter(dataList);
         mAdapter.setSelectedMode(ISelect.MULTIPLE_MODE);
         mAdapter.updateSelectMode(false);
         mAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
@@ -166,8 +168,8 @@ public abstract class BaseRecyclerViewFragment<ADAPTER extends SelectAdapter, LM
     /**
      * 重新设置适配器
      */
-    protected void invalidateAdapter() {
-        initAdapter();
+    protected void invalidateAdapter(ArrayList<ClassifyFileBean> dataList) {
+        initAdapter(dataList);
         checkIsEmpty();
         mRvFile.setAdapter(mAdapter);
     }
@@ -187,7 +189,7 @@ public abstract class BaseRecyclerViewFragment<ADAPTER extends SelectAdapter, LM
     protected abstract LM createLayoutManager();
 
     @NonNull
-    protected abstract ADAPTER createAdapter();
+    protected abstract ADAPTER createAdapter(ArrayList<ClassifyFileBean> dataList);
 
     /**
      * 去目的地
@@ -197,11 +199,11 @@ public abstract class BaseRecyclerViewFragment<ADAPTER extends SelectAdapter, LM
         // 交给子类去实现
     }
 
-    protected void showRecyclerView() {
+    public void showRecyclerView() {
         mRvFile.setVisibility(View.VISIBLE);
     }
 
-    protected void hideRecyclerView() {
+    public void hideRecyclerView() {
         mRvFile.setVisibility(View.GONE);
     }
 }

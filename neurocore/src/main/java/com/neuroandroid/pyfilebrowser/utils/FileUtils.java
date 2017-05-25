@@ -1,6 +1,13 @@
 package com.neuroandroid.pyfilebrowser.utils;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.graphics.drawable.Drawable;
+import android.provider.MediaStore;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -1366,5 +1373,34 @@ public class FileUtils {
         } else {
             return String.format("%.3fGB", (double) byteNum / ConstUtils.GB + 0.0005);
         }
+    }
+
+    public static String getVideoPath(Context context, int videoId) {
+        Cursor query = context.getContentResolver().query(MediaStore.Video.Thumbnails.EXTERNAL_CONTENT_URI,
+                new String[]{MediaStore.Video.Thumbnails.DATA},
+                "video_id=" + videoId, null, MediaStore.Video.Thumbnails.DEFAULT_SORT_ORDER);
+        if (query.getCount() != 0) {
+            query.moveToFirst();
+            return query.getString(query.getColumnIndex(MediaStore.Video.Thumbnails.DATA));
+        } else {
+            return "";
+        }
+    }
+
+    public static Drawable getApkIcon(Context context, String apkPath) {
+        PackageManager pm = context.getPackageManager();
+        PackageInfo info = pm.getPackageArchiveInfo(apkPath,
+                PackageManager.GET_ACTIVITIES);
+        if (info != null) {
+            ApplicationInfo appInfo = info.applicationInfo;
+            appInfo.sourceDir = apkPath;
+            appInfo.publicSourceDir = apkPath;
+            try {
+                return appInfo.loadIcon(pm);
+            } catch (OutOfMemoryError e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
     }
 }
