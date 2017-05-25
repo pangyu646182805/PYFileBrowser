@@ -62,6 +62,7 @@ public class ClassifyFragment extends BaseRecyclerViewGridSizeFragment<ClassifyF
             }
             if (PYFileStore.getInstance(mContext).getClassifyFileDataListSize(mCurrentClassifyFlag) == 0)
                 showLoading();*/
+            showLoading();
             showRecyclerView();
             EventBus.getDefault().post(new ClassifyEvent());
             getParentFragment().getLoaderManager().initLoader(position, null, ClassifyFragment.this);
@@ -95,6 +96,26 @@ public class ClassifyFragment extends BaseRecyclerViewGridSizeFragment<ClassifyF
         getAdapter().replaceAll(new ArrayList<>());
         hideRecyclerView();
         hideLoading();
+    }
+
+    @Override
+    protected String getEmptyMessage() {
+        switch (mCurrentClassifyFlag) {
+            case CLASSIFY_AUDIO:
+                return "没有音频";
+            case CLASSIFY_VIDEO:
+                return "没有视频";
+            case CLASSIFY_PHOTO:
+                return "没有照片";
+            case CLASSIFY_DOC:
+                return "没有文档";
+            case CLASSIFY_APK:
+                return "没有安装包";
+            case CLASSIFY_ZIP:
+                return "没有压缩包";
+            default:
+                return super.getEmptyMessage();
+        }
     }
 
     private static class AsyncFileLoader extends WrappedAsyncTaskLoader<ArrayList<ClassifyFileBean>> {

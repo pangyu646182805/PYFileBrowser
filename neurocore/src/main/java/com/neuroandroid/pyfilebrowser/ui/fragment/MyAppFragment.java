@@ -2,12 +2,13 @@ package com.neuroandroid.pyfilebrowser.ui.fragment;
 
 import com.neuroandroid.pyfilebrowser.R;
 import com.neuroandroid.pyfilebrowser.base.BaseFragment;
+import com.neuroandroid.pyfilebrowser.ui.activity.MainActivity;
 
 /**
  * Created by NeuroAndroid on 2017/5/23.
  */
 
-public class MyAppFragment extends BaseFragment {
+public class MyAppFragment extends BaseFragment implements MainActivity.MainActivityFragmentCallbacks {
     public static MyAppFragment newInstance() {
         return new MyAppFragment();
     }
@@ -20,5 +21,10 @@ public class MyAppFragment extends BaseFragment {
     @Override
     protected void initView() {
 
+    }
+
+    @Override
+    public boolean handleBackPress() {
+        return false;
     }
 }
