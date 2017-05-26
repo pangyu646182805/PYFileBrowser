@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.neuroandroid.pyfilebrowser.bean.ClassifyFileBean;
+import com.neuroandroid.pyfilebrowser.bean.PYFileBean;
 import com.neuroandroid.pyfilebrowser.ui.fragment.ClassifyFragment;
 import com.neuroandroid.pyfilebrowser.utils.FileUtils;
 
@@ -69,7 +69,7 @@ public class PYFileStore extends SQLiteOpenHelper {
     /**
      * 添加classifyFileBean到数据库
      */
-    public synchronized void addItem(ClassifyFileBean classifyFileBean) {
+    public synchronized void addItem(PYFileBean classifyFileBean) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("title", classifyFileBean.getTitle());
@@ -85,13 +85,13 @@ public class PYFileStore extends SQLiteOpenHelper {
      * @param classifyFlag {@link ClassifyFragment#CLASSIFY_AUDIO}...
      * @return 根据classifyFlag返回文件列表
      */
-    public ArrayList<ClassifyFileBean> getClassifyFileDataList(Context context, int classifyFlag) {
+    public ArrayList<PYFileBean> getClassifyFileDataList(Context context, int classifyFlag) {
         Cursor cursor = getReadableDatabase().query(TABLE_NAME, null,
                 "classifyFlag=?", new String[]{classifyFlag + ""}, null, null, null);
-        ArrayList<ClassifyFileBean> dataList = new ArrayList<>();
-        ClassifyFileBean fileBean;
+        ArrayList<PYFileBean> dataList = new ArrayList<>();
+        PYFileBean fileBean;
         while (cursor.moveToNext()) {
-            fileBean = new ClassifyFileBean();
+            fileBean = new PYFileBean();
             fileBean.setTitle(cursor.getString(cursor.getColumnIndex("title")));
             fileBean.setPath(cursor.getString(cursor.getColumnIndex("path")));
             fileBean.setSize(cursor.getLong(cursor.getColumnIndex("size")));

@@ -1,5 +1,6 @@
 package com.neuroandroid.pyfilebrowser.bean;
 
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 
 import java.io.File;
@@ -7,7 +8,7 @@ import java.io.File;
 /**
  * Created by NeuroAndroid on 2017/5/24.
  */
-public class ClassifyFileBean implements ISelect {
+public class PYFileBean implements ISelect {
     private boolean selected;
 
     private int id;
@@ -17,16 +18,19 @@ public class ClassifyFileBean implements ISelect {
     private long date;  // 文件修改时间
     private int classifyFlag;
     private File file;
+    private int fileType;  // 文件类型
+    private int childCount;  // 多少个子目录
+    private Bitmap thumbnail;  // 缩略图
 
     // 音频albumId
     private int albumId;
     // apk缩略图
     private Drawable appIcon;
 
-    public ClassifyFileBean() {
+    public PYFileBean() {
     }
 
-    public ClassifyFileBean(boolean selected, String title, String path, long size, long date, int classifyFlag) {
+    public PYFileBean(boolean selected, String title, String path, long size, long date, int classifyFlag) {
         this.selected = selected;
         this.title = title;
         this.path = path;
@@ -41,6 +45,30 @@ public class ClassifyFileBean implements ISelect {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public Bitmap getThumbnail() {
+        return thumbnail;
+    }
+
+    public void setThumbnail(Bitmap thumbnail) {
+        this.thumbnail = thumbnail;
+    }
+
+    public int getChildCount() {
+        return childCount;
+    }
+
+    public void setChildCount(int childCount) {
+        this.childCount = childCount;
+    }
+
+    public int getFileType() {
+        return fileType;
+    }
+
+    public void setFileType(int fileType) {
+        this.fileType = fileType;
     }
 
     public Drawable getAppIcon() {
@@ -141,7 +169,7 @@ public class ClassifyFileBean implements ISelect {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        ClassifyFileBean classifyFileBean = (ClassifyFileBean) o;
+        PYFileBean classifyFileBean = (PYFileBean) o;
         if (!title.equals(classifyFileBean.title)) return false;
         if (!path.equals(classifyFileBean.path)) return false;
         if (size != classifyFileBean.size) return false;

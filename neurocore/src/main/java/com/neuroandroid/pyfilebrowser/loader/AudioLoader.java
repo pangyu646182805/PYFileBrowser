@@ -7,7 +7,7 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.neuroandroid.pyfilebrowser.bean.ClassifyFileBean;
+import com.neuroandroid.pyfilebrowser.bean.PYFileBean;
 import com.neuroandroid.pyfilebrowser.ui.fragment.ClassifyFragment;
 
 import java.io.File;
@@ -19,14 +19,14 @@ import java.util.ArrayList;
 
 public class AudioLoader {
     @NonNull
-    public static ArrayList<ClassifyFileBean> getAllAudios(@NonNull Context context) {
+    public static ArrayList<PYFileBean> getAllAudios(@NonNull Context context) {
         Cursor cursor = makePhotoCursor(context, null, null, MediaStore.Audio.Media.DEFAULT_SORT_ORDER);
         return getAudios(cursor);
     }
 
     @NonNull
-    private static ArrayList<ClassifyFileBean> getAudios(@Nullable final Cursor cursor) {
-        ArrayList<ClassifyFileBean> songs = new ArrayList<>();
+    private static ArrayList<PYFileBean> getAudios(@Nullable final Cursor cursor) {
+        ArrayList<PYFileBean> songs = new ArrayList<>();
         if (cursor != null && cursor.moveToFirst()) {
             do {
                 songs.add(getAudioFromCursorImpl(cursor));
@@ -38,8 +38,8 @@ public class AudioLoader {
         return songs;
     }
 
-    private static ClassifyFileBean getAudioFromCursorImpl(Cursor cursor) {
-        ClassifyFileBean fileBean = new ClassifyFileBean();
+    private static PYFileBean getAudioFromCursorImpl(Cursor cursor) {
+        PYFileBean fileBean = new PYFileBean();
         fileBean.setTitle(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.AudioColumns.TITLE)));
         fileBean.setPath(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.AudioColumns.DATA)));
         fileBean.setSize(cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.AudioColumns.SIZE)));

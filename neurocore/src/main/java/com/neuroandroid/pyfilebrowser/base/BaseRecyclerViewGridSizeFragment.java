@@ -14,7 +14,7 @@ public abstract class BaseRecyclerViewGridSizeFragment<ADAPTER extends SelectAda
     /**
      * 网格大小
      */
-    private int mGridSize = 2;
+    private int mGridSize = 1;
 
     public final int getGridSize() {
         if (mGridSize == 0) {

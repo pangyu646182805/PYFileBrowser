@@ -1,5 +1,6 @@
 package com.neuroandroid.pyfilebrowser.base;
 
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -14,8 +15,8 @@ import com.neuroandroid.pyfilebrowser.adapter.ClassifyAdapter;
 import com.neuroandroid.pyfilebrowser.adapter.StorageAdapter;
 import com.neuroandroid.pyfilebrowser.adapter.base.SelectAdapter;
 import com.neuroandroid.pyfilebrowser.bean.ClassifyBean;
-import com.neuroandroid.pyfilebrowser.bean.ClassifyFileBean;
 import com.neuroandroid.pyfilebrowser.bean.ISelect;
+import com.neuroandroid.pyfilebrowser.bean.PYFileBean;
 import com.neuroandroid.pyfilebrowser.listener.CategoryCallBack;
 import com.neuroandroid.pyfilebrowser.utils.UIUtils;
 import com.neuroandroid.pyfilebrowser.widget.LoadingLayout;
@@ -65,12 +66,12 @@ public abstract class BaseRecyclerViewFragment<ADAPTER extends SelectAdapter, LM
     protected void initView() {
         if (getCurrentFragment() == CLASSIFY_FRAGMENT) {
             initClassifyRecyclerView();
-            initLayoutManager();
-            initAdapter(new ArrayList<>());
-            setUpRecyclerView();
         } else {
             initStorageRecyclerView();
         }
+        initLayoutManager();
+        initAdapter(new ArrayList<>());
+        setUpRecyclerView();
     }
 
     /**
@@ -113,7 +114,7 @@ public abstract class BaseRecyclerViewFragment<ADAPTER extends SelectAdapter, LM
         mLayoutManager = createLayoutManager();
     }
 
-    private void initAdapter(ArrayList<ClassifyFileBean> dataList) {
+    private void initAdapter(ArrayList<PYFileBean> dataList) {
         mAdapter = createAdapter(dataList);
         mAdapter.setSelectedMode(ISelect.MULTIPLE_MODE);
         mAdapter.updateSelectMode(false);
@@ -151,6 +152,11 @@ public abstract class BaseRecyclerViewFragment<ADAPTER extends SelectAdapter, LM
         mRvFile.getItemAnimator().setMoveDuration(333);
         mRvFile.setLayoutManager(mLayoutManager);
         mRvFile.setAdapter(mAdapter);
+
+        mRvFile.setPopupBgColor(UIUtils.getColor(R.color.colorPrimary));
+        mRvFile.setPopupTextColor(Color.WHITE);
+        mRvFile.setThumbColor(UIUtils.getColor(R.color.colorPrimary));
+        mRvFile.setTrackColor(Color.parseColor("#22009587"));
     }
 
     protected String getEmptyMessage() {
@@ -168,7 +174,7 @@ public abstract class BaseRecyclerViewFragment<ADAPTER extends SelectAdapter, LM
     /**
      * 重新设置适配器
      */
-    protected void invalidateAdapter(ArrayList<ClassifyFileBean> dataList) {
+    protected void invalidateAdapter(ArrayList<PYFileBean> dataList) {
         initAdapter(dataList);
         checkIsEmpty();
         mRvFile.setAdapter(mAdapter);
@@ -189,7 +195,7 @@ public abstract class BaseRecyclerViewFragment<ADAPTER extends SelectAdapter, LM
     protected abstract LM createLayoutManager();
 
     @NonNull
-    protected abstract ADAPTER createAdapter(ArrayList<ClassifyFileBean> dataList);
+    protected abstract ADAPTER createAdapter(ArrayList<PYFileBean> dataList);
 
     /**
      * 去目的地

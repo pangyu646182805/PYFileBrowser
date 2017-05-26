@@ -2,12 +2,15 @@ package com.neuroandroid.pyfilebrowser.utils;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.provider.MediaStore;
+import android.support.v4.content.FileProvider;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -1375,7 +1378,7 @@ public class FileUtils {
         }
     }
 
-    public static String getVideoPath(Context context, int videoId) {
+    public static String getVideoThumbnail(Context context, int videoId) {
         Cursor query = context.getContentResolver().query(MediaStore.Video.Thumbnails.EXTERNAL_CONTENT_URI,
                 new String[]{MediaStore.Video.Thumbnails.DATA},
                 "video_id=" + videoId, null, MediaStore.Video.Thumbnails.DEFAULT_SORT_ORDER);
@@ -1402,5 +1405,51 @@ public class FileUtils {
             }
         }
         return null;
+    }
+
+    public static void openSelectFile(Context context, File f) {
+        Intent intent = new Intent();
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setAction(android.content.Intent.ACTION_VIEW);
+        String type = getFileType(f);
+        // intent.setDataAndType(Uri.fromFile(f), type);
+        Uri uri = FileProvider.getUriForFile(context, "com.neuroandroid.pyfilebrowser.fileprovider", f);
+        intent.setDataAndType(uri, type);
+        context.startActivity(intent);
+    }
+
+    /**
+     * 判断文件类型
+     **/
+    public static String getFileType(File f) {
+        String type = "";
+        String fName = f.getName();
+        /* 取得扩展名 */
+        String end = fName.substring(fName.lastIndexOf(".") + 1, fName.length()).toLowerCase();
+
+        /* 依扩展名的类型决定FileType */
+        if (end.equals("mp3") || end.equals("mid") || end.equals("wav") || end.equals("aac") ||
+                end.equals("amr")) {
+            type = "audio";
+        } else if (end.equals("3gp") || end.equals("mp4") || end.equals("rmvb")) {
+            type = "video";
+        } else if (end.equals("jpg") || end.equals("gif") || end.equals("png") ||
+                end.equals("jpeg") || end.equals("bmp")) {
+            type = "image";
+        } else if (end.equals("apk")) {
+          /* android.permission.INSTALL_PACKAGES */
+            type = "application/vnd.android.package-archive";
+        } else if (end.equals("txt") || end.equals("c") || end.equals("java") || end.equals("xml") ||
+                end.equals("cpp")) {
+            type = "text";
+        } else {
+            type = "*";
+        }
+        /*若无法直接打开文件，就弹出软件列表*/
+        if (end.equals("apk")) {
+        } else {
+            type += "/*";
+        }
+        return type;
     }
 }

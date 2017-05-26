@@ -3,7 +3,7 @@ package com.neuroandroid.pyfilebrowser.loader;
 import android.content.Context;
 import android.os.AsyncTask;
 
-import com.neuroandroid.pyfilebrowser.bean.ClassifyFileBean;
+import com.neuroandroid.pyfilebrowser.bean.PYFileBean;
 import com.neuroandroid.pyfilebrowser.filter.PYFileFilter;
 import com.neuroandroid.pyfilebrowser.provider.PYFileStore;
 import com.neuroandroid.pyfilebrowser.utils.L;
@@ -25,7 +25,7 @@ public class OldFileLoader extends AsyncTask<String, Void, Void> {
     // 数据库
     private PYFileStore mPYFileStore;
     // 符合条件的文件列表
-    private List<ClassifyFileBean> mClassifyFileBeanDataList;
+    private List<PYFileBean> mClassifyFileBeanDataList;
 
     public OldFileLoader(Context context, int classifyFlag) {
         this.mContext = context;
@@ -60,7 +60,7 @@ public class OldFileLoader extends AsyncTask<String, Void, Void> {
         super.onPostExecute(aVoid);
         if (mCallBack != null) mCallBack.onPostExecute(mClassifyFileBeanDataList);
         L.e(mPYFileStore.getClassifyFileDataListSize(mClassifyFlag) + " : " + mClassifyFileBeanDataList.size());
-        for (ClassifyFileBean bean : mClassifyFileBeanDataList) {
+        for (PYFileBean bean : mClassifyFileBeanDataList) {
             // L.e(bean.toString());
         }
         if (!SetUtils.equals(mPYFileStore.getClassifyFileDataList(mContext, mClassifyFlag), mClassifyFileBeanDataList)) {
@@ -82,7 +82,7 @@ public class OldFileLoader extends AsyncTask<String, Void, Void> {
                 getFiles(f);
             } else {
                 String absolutePath = f.getAbsolutePath();
-                ClassifyFileBean classifyFileBean = new ClassifyFileBean();
+                PYFileBean classifyFileBean = new PYFileBean();
                 String title = absolutePath.substring(absolutePath.lastIndexOf("/") + 1, absolutePath.length());
                 classifyFileBean.setTitle(title);
                 classifyFileBean.setPath(absolutePath);
@@ -105,18 +105,18 @@ public class OldFileLoader extends AsyncTask<String, Void, Void> {
      * 文件加载的回调接口
      */
     public interface CallBack {
-        void onPostExecute(List<ClassifyFileBean> classifyFileBeanDataList);
+        void onPostExecute(List<PYFileBean> classifyFileBeanDataList);
     }
 
     /**
      * 保存文件列表
      */
-    private class AsyncFileSaver extends AsyncTask<List<ClassifyFileBean>, Void, Void> {
+    private class AsyncFileSaver extends AsyncTask<List<PYFileBean>, Void, Void> {
         @Override
-        protected Void doInBackground(List<ClassifyFileBean>... lists) {
+        protected Void doInBackground(List<PYFileBean>... lists) {
             mPYFileStore.delete(mClassifyFlag);
-            List<ClassifyFileBean> list = lists[0];
-            for (ClassifyFileBean bean : list) {
+            List<PYFileBean> list = lists[0];
+            for (PYFileBean bean : list) {
                 mPYFileStore.addItem(bean);
             }
             return null;

@@ -1,22 +1,29 @@
 package com.neuroandroid.pyfilebrowser.adapter;
 
+import android.app.Activity;
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.Formatter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.neuroandroid.pyfilebrowser.R;
 import com.neuroandroid.pyfilebrowser.adapter.base.SelectAdapter;
-import com.neuroandroid.pyfilebrowser.bean.ClassifyFileBean;
+import com.neuroandroid.pyfilebrowser.bean.PYFileBean;
+import com.neuroandroid.pyfilebrowser.glide.MediaGlideRequest;
+import com.neuroandroid.pyfilebrowser.glide.MediaGlideTarget;
 import com.neuroandroid.pyfilebrowser.ui.fragment.ClassifyFragment;
-import com.neuroandroid.pyfilebrowser.utils.FileUtils;
-import com.neuroandroid.pyfilebrowser.utils.ImageLoader;
+import com.neuroandroid.pyfilebrowser.utils.SystemUtils;
 import com.neuroandroid.pyfilebrowser.utils.TimeUtils;
+import com.neuroandroid.pyfilebrowser.utils.UIUtils;
 import com.neuroandroid.pyfilebrowser.widget.NoPaddingTextView;
+import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.util.List;
 
@@ -27,10 +34,10 @@ import butterknife.ButterKnife;
  * Created by NeuroAndroid on 2017/5/24.
  */
 
-public class ClassifyFileAdapter extends SelectAdapter<ClassifyFileBean, ClassifyFileAdapter.Holder> {
+public class ClassifyFileAdapter extends SelectAdapter<PYFileBean, ClassifyFileAdapter.Holder> implements FastScrollRecyclerView.SectionedAdapter {
     private int mClassifyFlag = ClassifyFragment.CLASSIFY_AUDIO;
 
-    public ClassifyFileAdapter(Context context, List<ClassifyFileBean> dataList, int classifyFlag, int itemType) {
+    public ClassifyFileAdapter(Context context, List<PYFileBean> dataList, int classifyFlag, int itemType) {
         super(context, dataList);
         this.mClassifyFlag = classifyFlag;
         mCurrentType = itemType;
@@ -52,7 +59,7 @@ public class ClassifyFileAdapter extends SelectAdapter<ClassifyFileBean, Classif
 
     @Override
     public void onBindItemViewHolder(Holder holder, int position) {
-        ClassifyFileBean classifyFileBean = mDataList.get(position);
+        PYFileBean classifyFileBean = mDataList.get(position);
         switch (mClassifyFlag) {
             case ClassifyFragment.CLASSIFY_AUDIO:
                 holder.onBindAudio(classifyFileBean);
@@ -80,6 +87,14 @@ public class ClassifyFileAdapter extends SelectAdapter<ClassifyFileBean, Classif
         return mCurrentType;
     }
 
+    @NonNull
+    @Override
+    public String getSectionName(int position) {
+        String title = mDataList.get(position).getTitle();
+        if (UIUtils.isEmpty(title)) return "";
+        return title.substring(0, 1);
+    }
+
     public class Holder extends RecyclerView.ViewHolder {
         @BindView(R.id.iv_img)
         ImageView mIvImg;
@@ -91,35 +106,38 @@ public class ClassifyFileAdapter extends SelectAdapter<ClassifyFileBean, Classif
         @BindView(R.id.iv_menu)
         ImageView mIvMenu;
         @Nullable
-        @BindView(R.id.tv_size)
-        NoPaddingTextView mTvSize;
+        @BindView(R.id.tv_desc)
+        NoPaddingTextView mTvDesc;
 
         public Holder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
 
-        public void onBindAudio(ClassifyFileBean classifyFileBean) {
-            ImageLoader.getInstance().displayImageFromAlbumId(mContext, classifyFileBean.getAlbumId(), R.mipmap.ic_type_audio, mIvImg);
+        public void onBindAudio(PYFileBean classifyFileBean) {
+            // ImageLoader.getInstance().displayImageFromAlbumId(mContext, classifyFileBean.getAlbumId(), R.mipmap.ic_type_audio, mIvImg);
+            loadImage(classifyFileBean, R.mipmap.ic_type_audio);
             setText(classifyFileBean);
         }
 
-        public void onBindVideo(ClassifyFileBean classifyFileBean) {
-            ImageLoader.getInstance().displayImage(mContext, FileUtils.getVideoPath(mContext, classifyFileBean.getId()), R.mipmap.ic_type_video, mIvImg);
+        public void onBindVideo(PYFileBean classifyFileBean) {
+            // ImageLoader.getInstance().displayImage(mContext, FileUtils.getVideoPath(mContext, classifyFileBean.getId()), R.mipmap.ic_type_video, mIvImg);
+            loadImage(classifyFileBean, R.mipmap.ic_type_video);
             setText(classifyFileBean);
         }
 
-        public void onBindPhoto(ClassifyFileBean classifyFileBean) {
-            ImageLoader.getInstance().displayImage(mContext, classifyFileBean.getPath(), R.mipmap.ic_type_photo, mIvImg);
+        public void onBindPhoto(PYFileBean classifyFileBean) {
+            // ImageLoader.getInstance().displayImage(mContext, classifyFileBean.getPath(), R.mipmap.ic_type_photo, mIvImg);
+            loadImage(classifyFileBean, R.mipmap.ic_type_photo);
             setText(classifyFileBean);
         }
 
-        public void onBindDoc(ClassifyFileBean classifyFileBean) {
+        public void onBindDoc(PYFileBean classifyFileBean) {
             mIvImg.setBackgroundResource(R.mipmap.ic_type_doc);
             setText(classifyFileBean);
         }
 
-        public void onBindApk(ClassifyFileBean classifyFileBean) {
+        public void onBindApk(PYFileBean classifyFileBean) {
             if (classifyFileBean.getAppIcon() == null) {
                 mIvImg.setBackgroundResource(R.mipmap.ic_type_apk);
             } else {
@@ -128,15 +146,46 @@ public class ClassifyFileAdapter extends SelectAdapter<ClassifyFileBean, Classif
             setText(classifyFileBean);
         }
 
-        public void onBindZip(ClassifyFileBean classifyFileBean) {
+        public void onBindZip(PYFileBean classifyFileBean) {
             mIvImg.setBackgroundResource(R.mipmap.ic_type_zip);
             setText(classifyFileBean);
         }
 
-        private void setText(ClassifyFileBean classifyFileBean) {
+        private void setText(PYFileBean classifyFileBean) {
             mTvTitle.setText(classifyFileBean.getTitle());
             mTvSubTitle.setText(TimeUtils.millis2String(classifyFileBean.getDate(), "yyyy/MM/dd hh:mm"));
-            if (mTvSize != null) mTvSize.setText(Formatter.formatFileSize(mContext, classifyFileBean.getSize()));
+            if (mTvDesc != null)
+                mTvDesc.setText(Formatter.formatFileSize(mContext, classifyFileBean.getSize()));
+        }
+
+        private void loadImage(PYFileBean classifyFileBean, int errorImg) {
+            MediaGlideRequest.Builder.from(Glide.with(mContext), classifyFileBean, errorImg)
+                    .asBitmap().build(mContext).into(new MediaGlideTarget(mIvImg) {
+                @Override
+                public void onReady(int loadFlag) {
+                    switch (loadFlag) {
+                        case MediaGlideTarget.FLAG_START:
+                            setIvImgLayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
+                            break;
+                        case MediaGlideTarget.FLAG_SUCCUSS:
+                            // setIvImgLayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
+                            int width = mCurrentType == TYPE_LIST ? (int) UIUtils.getDimen(R.dimen.x88) :
+                                    SystemUtils.getScreenWidth((Activity) mContext) / 2;
+                            setIvImgLayoutParams(width, width);
+                            break;
+                        case MediaGlideTarget.FLAG_FAILED:
+                            setIvImgLayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
+                            break;
+                    }
+                }
+            });
+        }
+
+        private void setIvImgLayoutParams(int width, int height) {
+            ViewGroup.LayoutParams params = mIvImg.getLayoutParams();
+            params.height = height;
+            params.width = width;
+            mIvImg.setLayoutParams(params);
         }
     }
 }

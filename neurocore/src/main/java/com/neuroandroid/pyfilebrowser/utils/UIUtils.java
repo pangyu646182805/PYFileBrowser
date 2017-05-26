@@ -5,11 +5,14 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.neuroandroid.pyfilebrowser.base.BaseApplication;
+import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 /**
  * Created by NeuroAndroid on 2017/2/8.
@@ -95,5 +98,21 @@ public class UIUtils {
 
     public static void setImage(ImageView iv, int resId) {
         iv.setImageResource(resId);
+    }
+
+    public static int getMarginBottom(View v) {
+        int marginBottom = 0;
+        final ViewGroup.LayoutParams layoutParams = v.getLayoutParams();
+        if (layoutParams instanceof ViewGroup.MarginLayoutParams) {
+            marginBottom = ((ViewGroup.MarginLayoutParams) layoutParams).bottomMargin;
+        }
+        return marginBottom;
+    }
+
+    public static void setUpFastScrollRecyclerViewColor(Context context, FastScrollRecyclerView recyclerView, int accentColor) {
+        /*recyclerView.setPopupBgColor(accentColor);
+        recyclerView.setPopupTextColor(MaterialValueHelper.getPrimaryTextColor(context, ColorUtil.isColorLight(accentColor)));
+        recyclerView.setThumbColor(accentColor);
+        recyclerView.setTrackColor(ColorUtil.withAlpha(ATHUtil.resolveColor(context, R.attr.colorControlNormal), 0.12f));*/
     }
 }

@@ -3,7 +3,7 @@ package com.neuroandroid.pyfilebrowser.loader;
 import android.content.Context;
 import android.os.Environment;
 
-import com.neuroandroid.pyfilebrowser.bean.ClassifyFileBean;
+import com.neuroandroid.pyfilebrowser.bean.PYFileBean;
 import com.neuroandroid.pyfilebrowser.filter.PYFileFilter;
 import com.neuroandroid.pyfilebrowser.ui.fragment.ClassifyFragment;
 import com.neuroandroid.pyfilebrowser.utils.FileUtils;
@@ -22,9 +22,9 @@ public class FileLoader {
     private PYFileFilter mPYFileFilter;
     private Context mContext;
     // 符合条件的文件列表
-    private ArrayList<ClassifyFileBean> mClassifyFileBeanDataList;
+    private ArrayList<PYFileBean> mClassifyFileBeanDataList;
 
-    public ArrayList<ClassifyFileBean> getClassifyFileBeanDataList() {
+    public ArrayList<PYFileBean> getClassifyFileBeanDataList() {
         return mClassifyFileBeanDataList;
     }
 
@@ -50,13 +50,14 @@ public class FileLoader {
                 getFiles(f);
             } else {
                 String absolutePath = f.getAbsolutePath();
-                ClassifyFileBean classifyFileBean = new ClassifyFileBean();
+                PYFileBean classifyFileBean = new PYFileBean();
                 String title = absolutePath.substring(absolutePath.lastIndexOf("/") + 1, absolutePath.length());
                 classifyFileBean.setTitle(title);
                 classifyFileBean.setPath(absolutePath);
                 classifyFileBean.setDate(f.lastModified());
                 classifyFileBean.setSize(f.length());
                 classifyFileBean.setClassifyFlag(mClassifyFlag);
+                classifyFileBean.setFile(new File(absolutePath));
                 if (mClassifyFlag == ClassifyFragment.CLASSIFY_APK) {
                     classifyFileBean.setAppIcon(FileUtils.getApkIcon(mContext, absolutePath));
                 }
