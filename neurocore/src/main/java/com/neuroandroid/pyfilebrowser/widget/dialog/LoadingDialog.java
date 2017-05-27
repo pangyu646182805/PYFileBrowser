@@ -32,7 +32,7 @@ public class LoadingDialog extends BaseDialog<LoadingDialog> {
 
     public static void showLoadingDialog(Context context) {
         if (mLoadingDialog == null) {
-            mLoadingDialog = new LoadingDialog(context, DialogUtils.getCustomConfig(false, true, 0.6f, Gravity.CENTER, false, -1, WindowConfig.LAYOUT_PARM_WRAP_CONTENT));
+            mLoadingDialog = new LoadingDialog(context, DialogUtils.getCustomConfig(false, true, 0.6f, Gravity.CENTER, false, -1, WindowConfig.LAYOUT_PARM_WRAP_CONTENT, WindowConfig.LAYOUT_PARM_WRAP_CONTENT));
         }
         mLoadingDialog.show();
     }

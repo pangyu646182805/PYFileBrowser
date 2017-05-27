@@ -29,11 +29,12 @@ public class DialogUtils {
     }
 
     public static WindowConfig getDefaultConfig() {
-        return getCustomConfig(true, true, 0.6f, Gravity.CENTER, true, R.style.custom_dialog_anim, WindowConfig.LAYOUT_PARM_WRAP_CONTENT);
+        return getCustomConfig(true, true, 0.6f, Gravity.CENTER, true, R.style.custom_dialog_anim,
+                WindowConfig.LAYOUT_PARM_WRAP_CONTENT, WindowConfig.LAYOUT_PARM_WRAP_CONTENT);
     }
 
     public static WindowConfig getCustomConfig(boolean canceledOnTouchOutside, boolean cancelable, float dimAmount,
-                                               int gravity, boolean needAnim, int dialogAnimResId, int lpWidth) {
+                                               int gravity, boolean needAnim, int dialogAnimResId, int lpWidth, int lpHeight) {
         return new WindowConfig()
                 .setCanceledOnTouchOutside(canceledOnTouchOutside)
                 .setCancelable(cancelable)
@@ -41,6 +42,7 @@ public class DialogUtils {
                 .setGravity(gravity)
                 .setNeedAnim(needAnim)
                 .setDialogAnimResId(dialogAnimResId)
+                .setLpHeight(lpHeight)
                 .setLpWidth(lpWidth);
     }
 }

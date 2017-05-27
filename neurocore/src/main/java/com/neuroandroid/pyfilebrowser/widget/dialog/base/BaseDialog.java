@@ -95,7 +95,7 @@ public abstract class BaseDialog<T extends BaseDialog<T>> extends Dialog {
         // 设置Dialog的宽高属性
         WindowManager.LayoutParams lp = window.getAttributes();
         lp.width = config.getLpWidth();
-        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        lp.height = config.getLpHeight();
         lp.alpha = 1.0f;
         lp.dimAmount = config.getDimAmount();
         window.setAttributes(lp);

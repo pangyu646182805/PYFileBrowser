@@ -29,7 +29,7 @@ public class BottomDialog extends BaseDialog<BottomDialog> {
     }
 
     public BottomDialog(@NonNull Context context, WindowConfig config) {
-        super(context, DialogUtils.getCustomConfig(true, true, DEFAULT_DIM_AMOUNT, Gravity.BOTTOM, true, R.style.AnimationsGrowFromBottom, WindowConfig.LAYOUT_PARM_MATCH_PARENT));
+        super(context, DialogUtils.getCustomConfig(true, true, DEFAULT_DIM_AMOUNT, Gravity.BOTTOM, true, R.style.AnimationsGrowFromBottom, WindowConfig.LAYOUT_PARM_MATCH_PARENT, WindowConfig.LAYOUT_PARM_MATCH_PARENT));
     }
 
     @Override

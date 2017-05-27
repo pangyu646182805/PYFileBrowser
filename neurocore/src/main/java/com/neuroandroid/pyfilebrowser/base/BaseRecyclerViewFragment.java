@@ -192,6 +192,15 @@ public abstract class BaseRecyclerViewFragment<ADAPTER extends SelectAdapter, LM
         return CLASSIFY_FRAGMENT;
     }
 
+    /**
+     * 清除选择
+     */
+    public void clearSelected() {
+        getAdapter().clearSelected();
+        getAdapter().notifyDataSetChanged();
+        getAdapter().updateSelectMode(false);
+    }
+
     protected abstract LM createLayoutManager();
 
     @NonNull

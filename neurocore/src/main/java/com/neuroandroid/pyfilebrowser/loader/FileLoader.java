@@ -123,7 +123,9 @@ public class FileLoader {
         ArrayList<PYFileBean> songs = new ArrayList<>();
         if (cursor != null && cursor.moveToFirst()) {
             do {
-                songs.add(getFileFromCursorImpl(cursor, context, classifyFlag));
+                PYFileBean pyFileBean = getFileFromCursorImpl(cursor, context, classifyFlag);
+                if (pyFileBean != null)
+                    songs.add(pyFileBean);
             } while (cursor.moveToNext());
         }
 
@@ -133,11 +135,15 @@ public class FileLoader {
     }
 
     private static PYFileBean getFileFromCursorImpl(Cursor cursor, @NonNull Context context, int classifyFlag) {
+        String path = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.AudioColumns.DATA));
+        File file = new File(path);
+        if (file.isDirectory()) return null;
+        if (!file.exists() || file.length() == 0) return null;
         PYFileBean fileBean = new PYFileBean();
+        fileBean.setPath(path);
+        fileBean.setFile(file);
         fileBean.setTitle(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.AudioColumns.TITLE)));
-        fileBean.setPath(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.AudioColumns.DATA)));
         fileBean.setSize(cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.AudioColumns.SIZE)));
-        fileBean.setFile(new File(fileBean.getPath()));
         fileBean.setDate(fileBean.getFile().lastModified());
         fileBean.setClassifyFlag(classifyFlag);
         if (classifyFlag == ClassifyFragment.CLASSIFY_APK) {

@@ -14,13 +14,13 @@ import com.neuroandroid.pyfilebrowser.bean.ClassifyBean;
 import com.neuroandroid.pyfilebrowser.bean.ISelect;
 import com.neuroandroid.pyfilebrowser.bean.PYFileBean;
 import com.neuroandroid.pyfilebrowser.event.ClassifyEvent;
+import com.neuroandroid.pyfilebrowser.event.SelectedEvent;
 import com.neuroandroid.pyfilebrowser.loader.AudioLoader;
 import com.neuroandroid.pyfilebrowser.loader.FileLoader;
 import com.neuroandroid.pyfilebrowser.loader.PhotoLoader;
 import com.neuroandroid.pyfilebrowser.loader.VideoLoader;
 import com.neuroandroid.pyfilebrowser.loader.WrappedAsyncTaskLoader;
 import com.neuroandroid.pyfilebrowser.utils.FileUtils;
-import com.neuroandroid.pyfilebrowser.utils.L;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -43,6 +43,14 @@ public class ClassifyFragment extends BaseRecyclerViewGridSizeFragment<ClassifyF
     public static final int CLASSIFY_COLLECTION = 7;
     private int mCurrentClassifyFlag = CLASSIFY_AUDIO;
     private ArrayList<PYFileBean> mSelectedDataList = new ArrayList<>();
+
+    @Override
+    protected void initData() {
+    }
+
+    public ArrayList<PYFileBean> getSelectedDataList() {
+        return mSelectedDataList;
+    }
 
     @Override
     protected GridLayoutManager createLayoutManager() {
@@ -74,6 +82,10 @@ public class ClassifyFragment extends BaseRecyclerViewGridSizeFragment<ClassifyF
         }
     }
 
+    public void restartLoader() {
+        getParentFragment().getLoaderManager().restartLoader(mCurrentClassifyFlag, null, ClassifyFragment.this);
+    }
+
     @Override
     protected int getCurrentFragment() {
         return CLASSIFY_FRAGMENT;
@@ -103,7 +115,7 @@ public class ClassifyFragment extends BaseRecyclerViewGridSizeFragment<ClassifyF
                     } else {
                         mSelectedDataList.remove(pyFileBean);
                     }
-                    L.e("size : " + mSelectedDataList.size());
+                    EventBus.getDefault().post(new SelectedEvent<PYFileBean>().setSelectedBeans(mSelectedDataList));
                 }
 
                 @Override
@@ -113,6 +125,13 @@ public class ClassifyFragment extends BaseRecyclerViewGridSizeFragment<ClassifyF
                 }
             });
         }
+    }
+
+    @Override
+    public void clearSelected() {
+        super.clearSelected();
+        // 清除被选中的集合
+        if (mSelectedDataList.size() > 0) mSelectedDataList.clear();
     }
 
     @Override

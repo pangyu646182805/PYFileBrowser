@@ -1,5 +1,8 @@
 package com.neuroandroid.pyfilebrowser.ui.fragment;
 
+import android.media.MediaScannerConnection;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -11,16 +14,28 @@ import android.widget.PopupMenu;
 import com.neuroandroid.pyfilebrowser.R;
 import com.neuroandroid.pyfilebrowser.adapter.MyFilePagerAdapter;
 import com.neuroandroid.pyfilebrowser.base.BaseFragment;
+import com.neuroandroid.pyfilebrowser.base.BaseRecyclerViewFragment;
 import com.neuroandroid.pyfilebrowser.base.BaseRecyclerViewGridSizeFragment;
+import com.neuroandroid.pyfilebrowser.bean.PYFileBean;
 import com.neuroandroid.pyfilebrowser.event.BaseEvent;
+import com.neuroandroid.pyfilebrowser.event.SelectedEvent;
 import com.neuroandroid.pyfilebrowser.event.StorageEvent;
 import com.neuroandroid.pyfilebrowser.ui.activity.MainActivity;
+import com.neuroandroid.pyfilebrowser.utils.FileUtils;
+import com.neuroandroid.pyfilebrowser.utils.L;
+import com.neuroandroid.pyfilebrowser.utils.ShowUtils;
 import com.neuroandroid.pyfilebrowser.utils.UIUtils;
 import com.neuroandroid.pyfilebrowser.widget.TitleBar;
+import com.neuroandroid.pyfilebrowser.widget.dialog.FileListDialog;
+import com.neuroandroid.pyfilebrowser.widget.dialog.TitleDialog;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 
@@ -43,8 +58,12 @@ public class MyFileFragment extends BaseFragment implements MainActivity.MainAct
     private MyFilePagerAdapter mFilePagerAdapter;
     private boolean classifyRoot = true;  // 判断返回事件(是否在根目录)
     private boolean storageRoot = true;  // 判断返回事件(是否在根目录)
+    private boolean selectedMenuOpen;  // 判断返回事件(是否是选择模式)
     private TitleBar.ImageAction mUpAction;
     private TitleBar.ImageAction mSortAction;
+    private TitleBar.ImageAction mCloseAction;
+    private TitleBar.ImageAction mDelAction;
+    private TitleBar.ImageAction mCopyAction;
 
     public static MyFileFragment newInstance() {
         return new MyFileFragment();
@@ -76,7 +95,7 @@ public class MyFileFragment extends BaseFragment implements MainActivity.MainAct
             @Override
             public void performAction(View view) {
                 PopupMenu popupMenu = new PopupMenu(mContext, mStatusBar, GravityCompat.END);
-                popupMenu.inflate(R.menu.menu_classify);
+                popupMenu.inflate(selectedMenuOpen ? R.menu.menu_classify_selected : R.menu.menu_classify);
                 popupMenu.setOnMenuItemClickListener(menuItem -> {
                     BaseRecyclerViewGridSizeFragment recyclerViewGridSizeFragment = (BaseRecyclerViewGridSizeFragment) getFragment(0);
                     switch (menuItem.getItemId()) {
@@ -124,6 +143,64 @@ public class MyFileFragment extends BaseFragment implements MainActivity.MainAct
 
             }
         };
+        mCloseAction = new TitleBar.ImageAction(R.drawable.ic_close_white) {
+            @Override
+            public void performAction(View view) {
+                if (selectedMenuOpen) {
+                    selectedMenuOpen = false;
+                    closeSelectedMenu();
+                    clearSelected();
+                }
+            }
+        };
+        mDelAction = new TitleBar.ImageAction(R.drawable.ic_delete) {
+            @Override
+            public void performAction(View view) {
+                new TitleDialog(mContext).setCustomTitle("删除文件?")
+                        .setConfirmClickListener((dialog, v) -> {
+                            Fragment fragment = getFragment(mVpContent.getCurrentItem());
+                            if (fragment instanceof ClassifyFragment) {
+                                ClassifyFragment classifyFragment = (ClassifyFragment) fragment;
+                                new DelAsyncTask(classifyFragment).execute(classifyFragment.getSelectedDataList());
+                                dialog.dismiss();
+                            }
+                        }).show();
+            }
+        };
+        mCopyAction = new TitleBar.ImageAction(R.drawable.ic_content_copy) {
+            @Override
+            public void performAction(View view) {
+                new FileListDialog(mContext, null).setCustomTitle("复制至")
+                        .setCompleteClickListener((v, fileListDialog, destFile) -> {
+                            Fragment fragment = getFragment(mVpContent.getCurrentItem());
+                            if (fragment instanceof ClassifyFragment) {
+                                ClassifyFragment classifyFragment = (ClassifyFragment) fragment;
+                                ArrayList<PYFileBean> selectedDataList = classifyFragment.getSelectedDataList();
+                                for (PYFileBean pyFileBean : selectedDataList) {
+                                    String path = pyFileBean.getPath();
+                                    String title = path.substring(path.lastIndexOf("/") + 1, path.length());
+                                    destFile = new File(destFile.getAbsolutePath() + "/" + title);
+                                    boolean copyFile = FileUtils.copyFile(pyFileBean.getFile(), destFile);
+                                    if (copyFile) {
+                                        // 复制成功
+                                        L.e("复制成功");
+                                        MediaScannerConnection.scanFile(mContext, new String[]{destFile.getAbsolutePath()}, null, new MediaScannerConnection.MediaScannerConnectionClient() {
+                                            @Override
+                                            public void onMediaScannerConnected() {
+                                                L.e("onMediaScannerConnected");
+                                            }
+
+                                            @Override
+                                            public void onScanCompleted(String path, Uri uri) {
+                                                L.e("path : " + path + " uri : " + uri);
+                                            }
+                                        });
+                                    }
+                                }
+                            }
+                        }).show();
+            }
+        };
     }
 
     private void handleGridSizeMenuItem(BaseRecyclerViewGridSizeFragment recyclerViewGridSizeFragment) {
@@ -162,7 +239,34 @@ public class MyFileFragment extends BaseFragment implements MainActivity.MainAct
                     }
                     storageRoot = false;
                     break;
+                case BaseEvent.EVENT_SELECTED_MODE:
+                    SelectedEvent selectedEvent = (SelectedEvent) baseEvent;
+                    List<PYFileBean> pyFileBeanList = selectedEvent.getSelectedBeans();
+                    int size = pyFileBeanList.size();
+                    handleSelectedEvent(size, size <= 0 ? null : pyFileBeanList.get(0).getTitle());
+                    break;
             }
+        }
+    }
+
+    /**
+     * 处理多选事件
+     */
+    private void handleSelectedEvent(int selectedSize, String selectedSizeIsOneTitle) {
+        if (selectedSize <= 0) {
+            if (selectedMenuOpen) {
+                selectedMenuOpen = false;
+                closeSelectedMenu();
+            }
+            getTitleBar().setTitle(UIUtils.getString(R.string.app_name));
+        } else if (selectedSize == 1) {
+            if (!selectedMenuOpen) {
+                selectedMenuOpen = true;
+                openSelectedMenu();
+            }
+            getTitleBar().setTitle(selectedSizeIsOneTitle);
+        } else {
+            getTitleBar().setTitle(UIUtils.getString(R.string.x_selected, selectedSize));
         }
     }
 
@@ -170,6 +274,24 @@ public class MyFileFragment extends BaseFragment implements MainActivity.MainAct
         initRightAction(mUpAction);
         initRightAction(mSortAction);
         initRightAction(mSpinnerAction);
+    }
+
+    private void openSelectedMenu() {
+        getTitleBar().removeLeftAction(mMenuAction);
+        initLeftAction(mCloseAction);
+
+        closeMenu();
+        initRightAction(mDelAction);
+        initRightAction(mCopyAction);
+        initRightAction(mSpinnerAction);
+    }
+
+    private void closeSelectedMenu() {
+        getTitleBar().removeLeftAction(mCloseAction);
+        initLeftAction(mMenuAction);
+
+        getTitleBar().removeAllRightActions();
+        openMenu();
     }
 
     private void closeMenu() {
@@ -193,12 +315,27 @@ public class MyFileFragment extends BaseFragment implements MainActivity.MainAct
     }
 
     /**
+     * 清除指定Fragment的选择项
+     */
+    private void clearSelected() {
+        getTitleBar().setTitle(UIUtils.getString(R.string.app_name));
+        BaseRecyclerViewFragment recyclerViewFragment = (BaseRecyclerViewFragment) getFragment(mVpContent.getCurrentItem());
+        recyclerViewFragment.clearSelected();
+    }
+
+    /**
      * 处理返回事件
      */
     @Override
     public boolean handleBackPress() {
         switch (mVpContent.getCurrentItem()) {
             case 0:
+                if (selectedMenuOpen) {
+                    selectedMenuOpen = false;
+                    closeSelectedMenu();
+                    clearSelected();
+                    return true;
+                }
                 if (!classifyRoot) {
                     classifyRoot = true;
                     ClassifyFragment classifyFragment = (ClassifyFragment) getFragment(0);
@@ -258,5 +395,37 @@ public class MyFileFragment extends BaseFragment implements MainActivity.MainAct
     @Override
     public void onPageScrollStateChanged(int state) {
 
+    }
+
+    class DelAsyncTask extends AsyncTask<ArrayList<PYFileBean>, Void, Void> {
+        private BaseRecyclerViewFragment mRecyclerViewFragment;
+
+        public DelAsyncTask(BaseRecyclerViewFragment recyclerViewFragment) {
+            mRecyclerViewFragment = recyclerViewFragment;
+        }
+
+        @Override
+        protected Void doInBackground(ArrayList<PYFileBean>... arrayLists) {
+            ArrayList<PYFileBean> delList = arrayLists[0];
+            for (PYFileBean pyFileBean : delList) {
+                FileUtils.deleteFile(pyFileBean.getFile());
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            ShowUtils.showToast("删除成功");
+            if (selectedMenuOpen) {
+                selectedMenuOpen = false;
+                closeSelectedMenu();
+                clearSelected();
+            }
+            if (mRecyclerViewFragment instanceof ClassifyFragment) {
+                ClassifyFragment classifyFragment = (ClassifyFragment) mRecyclerViewFragment;
+                classifyFragment.restartLoader();
+            }
+        }
     }
 }

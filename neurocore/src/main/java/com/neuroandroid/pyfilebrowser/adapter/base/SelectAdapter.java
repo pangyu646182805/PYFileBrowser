@@ -126,7 +126,7 @@ public abstract class SelectAdapter<T extends ISelect, VH extends RecyclerView.V
     /**
      * 清除选择
      */
-    private void clearSelected() {
+    public void clearSelected() {
         for (ISelect bean : mDataList) {
             bean.setSelected(false);
         }
@@ -268,6 +268,11 @@ public abstract class SelectAdapter<T extends ISelect, VH extends RecyclerView.V
     public void replaceAll(ArrayList<T> dataList) {
         this.mDataList = dataList;
         notifyDataSetChanged();
+    }
+
+    public void remove(int position) {
+        mDataList.remove(position);
+        notifyItemRemoved(position);
     }
 
     @Override

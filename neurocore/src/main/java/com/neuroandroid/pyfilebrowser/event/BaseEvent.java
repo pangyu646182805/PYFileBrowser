@@ -8,6 +8,7 @@ public class BaseEvent {
     public static final int EVENT_CLASSIFY = 200;
     public static final int EVENT_STORAGE = 300;
     public static final int EVENT_STORAGE_BACK = 400;
+    public static final int EVENT_SELECTED_MODE = 500;
     private int eventFlag;
 
     public int getEventFlag() {
