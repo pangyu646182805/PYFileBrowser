@@ -20,7 +20,7 @@ import com.neuroandroid.pyfilebrowser.widget.NoPaddingTextView;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.io.File;
-import java.util.List;
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -30,7 +30,7 @@ import butterknife.ButterKnife;
  */
 
 public class StorageFileAdapter extends SelectAdapter<PYFileBean, StorageFileAdapter.Holder> implements FastScrollRecyclerView.SectionedAdapter {
-    public StorageFileAdapter(Context context, List<PYFileBean> dataList) {
+    public StorageFileAdapter(Context context, ArrayList<PYFileBean> dataList) {
         super(context, dataList);
     }
 

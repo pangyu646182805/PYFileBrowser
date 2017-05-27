@@ -25,7 +25,7 @@ import com.neuroandroid.pyfilebrowser.utils.UIUtils;
 import com.neuroandroid.pyfilebrowser.widget.NoPaddingTextView;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -37,7 +37,7 @@ import butterknife.ButterKnife;
 public class ClassifyFileAdapter extends SelectAdapter<PYFileBean, ClassifyFileAdapter.Holder> implements FastScrollRecyclerView.SectionedAdapter {
     private int mClassifyFlag = ClassifyFragment.CLASSIFY_AUDIO;
 
-    public ClassifyFileAdapter(Context context, List<PYFileBean> dataList, int classifyFlag, int itemType) {
+    public ClassifyFileAdapter(Context context, ArrayList<PYFileBean> dataList, int classifyFlag, int itemType) {
         super(context, dataList);
         this.mClassifyFlag = classifyFlag;
         mCurrentType = itemType;
@@ -59,25 +59,26 @@ public class ClassifyFileAdapter extends SelectAdapter<PYFileBean, ClassifyFileA
 
     @Override
     public void onBindItemViewHolder(Holder holder, int position) {
-        PYFileBean classifyFileBean = mDataList.get(position);
+        PYFileBean pyFileBean = mDataList.get(position);
+        holder.itemView.setActivated(pyFileBean.isSelected());
         switch (mClassifyFlag) {
             case ClassifyFragment.CLASSIFY_AUDIO:
-                holder.onBindAudio(classifyFileBean);
+                holder.onBindAudio(pyFileBean);
                 break;
             case ClassifyFragment.CLASSIFY_VIDEO:
-                holder.onBindVideo(classifyFileBean);
+                holder.onBindVideo(pyFileBean);
                 break;
             case ClassifyFragment.CLASSIFY_PHOTO:
-                holder.onBindPhoto(classifyFileBean);
+                holder.onBindPhoto(pyFileBean);
                 break;
             case ClassifyFragment.CLASSIFY_DOC:
-                holder.onBindDoc(classifyFileBean);
+                holder.onBindDoc(pyFileBean);
                 break;
             case ClassifyFragment.CLASSIFY_APK:
-                holder.onBindApk(classifyFileBean);
+                holder.onBindApk(pyFileBean);
                 break;
             case ClassifyFragment.CLASSIFY_ZIP:
-                holder.onBindZip(classifyFileBean);
+                holder.onBindZip(pyFileBean);
                 break;
         }
     }
@@ -163,19 +164,20 @@ public class ClassifyFileAdapter extends SelectAdapter<PYFileBean, ClassifyFileA
                     .asBitmap().build(mContext).into(new MediaGlideTarget(mIvImg) {
                 @Override
                 public void onReady(int loadFlag) {
-                    switch (loadFlag) {
-                        case MediaGlideTarget.FLAG_START:
-                            setIvImgLayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
-                            break;
-                        case MediaGlideTarget.FLAG_SUCCUSS:
-                            // setIvImgLayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
-                            int width = mCurrentType == TYPE_LIST ? (int) UIUtils.getDimen(R.dimen.x88) :
-                                    SystemUtils.getScreenWidth((Activity) mContext) / 2;
-                            setIvImgLayoutParams(width, width);
-                            break;
-                        case MediaGlideTarget.FLAG_FAILED:
-                            setIvImgLayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
-                            break;
+                    if (mCurrentType == TYPE_GRID) {
+                        switch (loadFlag) {
+                            case MediaGlideTarget.FLAG_START:
+                                setIvImgLayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
+                                break;
+                            case MediaGlideTarget.FLAG_SUCCUSS:
+                                // setIvImgLayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
+                                int width = SystemUtils.getScreenWidth((Activity) mContext) / 2;
+                                setIvImgLayoutParams(width, width);
+                                break;
+                            case MediaGlideTarget.FLAG_FAILED:
+                                setIvImgLayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
+                                break;
+                        }
                     }
                 }
             });

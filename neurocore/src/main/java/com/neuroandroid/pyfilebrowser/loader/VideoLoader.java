@@ -44,8 +44,9 @@ public class VideoLoader {
         fileBean.setTitle(cursor.getString(cursor.getColumnIndex(MediaStore.Video.VideoColumns.TITLE)));
         fileBean.setPath(cursor.getString(cursor.getColumnIndex(MediaStore.Video.VideoColumns.DATA)));
         fileBean.setSize(cursor.getLong(cursor.getColumnIndex(MediaStore.Video.VideoColumns.SIZE)));
-        fileBean.setDate(cursor.getLong(cursor.getColumnIndex(MediaStore.Video.VideoColumns.DATE_MODIFIED)));
         fileBean.setFile(new File(fileBean.getPath()));
+        // fileBean.setDate(cursor.getLong(cursor.getColumnIndex(MediaStore.Video.VideoColumns.DATE_MODIFIED)));
+        fileBean.setDate(fileBean.getFile().lastModified());
         fileBean.setClassifyFlag(ClassifyFragment.CLASSIFY_VIDEO);
         return fileBean;
     }
@@ -58,7 +59,7 @@ public class VideoLoader {
                             BaseColumns._ID,// 0
                             MediaStore.Video.VideoColumns.TITLE,// 1
                             MediaStore.Video.VideoColumns.SIZE,// 2
-                            MediaStore.Video.VideoColumns.DATE_MODIFIED,// 3
+                            // MediaStore.Video.VideoColumns.DATE_MODIFIED,// 3
                             MediaStore.Video.VideoColumns.DATA// 5
                     }, selection, selectionValues, sortOrder);
         } catch (SecurityException e) {

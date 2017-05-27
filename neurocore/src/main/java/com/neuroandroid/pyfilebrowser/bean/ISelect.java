@@ -20,5 +20,6 @@ public interface ISelect {
 
     interface OnItemSelectedListener<T> {
         void onItemSelected(View view, int position, boolean isSelected, T t);
+        void onNothingSelected();
     }
 }

@@ -14,7 +14,7 @@ import com.neuroandroid.pyfilebrowser.bean.NormalListBean;
 import com.neuroandroid.pyfilebrowser.widget.dialog.base.BaseDialog;
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import butterknife.BindView;
 
@@ -89,7 +89,7 @@ public class ListDialog extends BaseDialog<ListDialog> {
      * @param itemHeight           item高度
      * @param itemSelectedListener 选择监听器
      */
-    public ListDialog setNormalListAdapter(List<NormalListBean> dataList, float itemHeight,
+    public ListDialog setNormalListAdapter(ArrayList<NormalListBean> dataList, float itemHeight,
                                            ISelect.OnItemSelectedListener<NormalListBean> itemSelectedListener) {
         if (dataList == null && dataList.size() == 0) {
             throw new IllegalArgumentException("dataList is null or dataList.size is 0");
@@ -109,7 +109,7 @@ public class ListDialog extends BaseDialog<ListDialog> {
      * @param dataList             数据源
      * @param itemSelectedListener 选择监听器
      */
-    public ListDialog setNormalListAdapter(List<NormalListBean> dataList, ISelect.OnItemSelectedListener<NormalListBean> itemSelectedListener) {
+    public ListDialog setNormalListAdapter(ArrayList<NormalListBean> dataList, ISelect.OnItemSelectedListener<NormalListBean> itemSelectedListener) {
         setNormalListAdapter(dataList, 0, itemSelectedListener);
         return this;
     }

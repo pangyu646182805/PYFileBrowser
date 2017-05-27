@@ -6,10 +6,12 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.GridLayoutManager;
+import android.view.View;
 
 import com.neuroandroid.pyfilebrowser.adapter.ClassifyFileAdapter;
 import com.neuroandroid.pyfilebrowser.base.BaseRecyclerViewGridSizeFragment;
 import com.neuroandroid.pyfilebrowser.bean.ClassifyBean;
+import com.neuroandroid.pyfilebrowser.bean.ISelect;
 import com.neuroandroid.pyfilebrowser.bean.PYFileBean;
 import com.neuroandroid.pyfilebrowser.event.ClassifyEvent;
 import com.neuroandroid.pyfilebrowser.loader.AudioLoader;
@@ -18,6 +20,7 @@ import com.neuroandroid.pyfilebrowser.loader.PhotoLoader;
 import com.neuroandroid.pyfilebrowser.loader.VideoLoader;
 import com.neuroandroid.pyfilebrowser.loader.WrappedAsyncTaskLoader;
 import com.neuroandroid.pyfilebrowser.utils.FileUtils;
+import com.neuroandroid.pyfilebrowser.utils.L;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -39,6 +42,7 @@ public class ClassifyFragment extends BaseRecyclerViewGridSizeFragment<ClassifyF
     public static final int CLASSIFY_DOWNLOAD = 6;
     public static final int CLASSIFY_COLLECTION = 7;
     private int mCurrentClassifyFlag = CLASSIFY_AUDIO;
+    private ArrayList<PYFileBean> mSelectedDataList = new ArrayList<>();
 
     @Override
     protected GridLayoutManager createLayoutManager() {
@@ -86,6 +90,28 @@ public class ClassifyFragment extends BaseRecyclerViewGridSizeFragment<ClassifyF
         if (data != null) {
             invalidateAdapter(data);
             getAdapter().setItemClickListener((view, position, pyFileBean) -> FileUtils.openSelectFile(mContext, pyFileBean.getFile()));
+            getAdapter().setItemLongClickListener((view, position, song) -> {
+                if (!getAdapter().isSelectMode()) {
+                    getAdapter().updateSelectMode(true, position);
+                }
+            });
+            getAdapter().setItemSelectedListener(new ISelect.OnItemSelectedListener<PYFileBean>() {
+                @Override
+                public void onItemSelected(View view, int position, boolean isSelected, PYFileBean pyFileBean) {
+                    if (isSelected) {
+                        mSelectedDataList.add(pyFileBean);
+                    } else {
+                        mSelectedDataList.remove(pyFileBean);
+                    }
+                    L.e("size : " + mSelectedDataList.size());
+                }
+
+                @Override
+                public void onNothingSelected() {
+                    // 一个条目都没有被选择则取消多选模式
+                    getAdapter().updateSelectMode(false);
+                }
+            });
         }
     }
 
@@ -141,9 +167,9 @@ public class ClassifyFragment extends BaseRecyclerViewGridSizeFragment<ClassifyF
                 case CLASSIFY_APK:
                 case CLASSIFY_ZIP:
                 default:
-                    FileLoader fileLoader = new FileLoader(getContext(), mClassifyFlag);
+                    /*FileLoader fileLoader = new FileLoader(getContext(), mClassifyFlag);
                     fileLoader.loadFile(FILE_FILTER[mClassifyFlag]);
-                    ArrayList<PYFileBean> classifyFileBeanDataList = fileLoader.getClassifyFileBeanDataList();
+                    ArrayList<PYFileBean> classifyFileBeanDataList = fileLoader.getClassifyFileBeanDataList();*/
 
                     /*List<PYFileBean> classifyFileDataList = PYFileStore.getInstance(getContext()).getClassifyFileDataList(getContext(), mClassifyFlag);
                     if (!SetUtils.equals(classifyFileDataList, classifyFileBeanDataList)) {
@@ -157,7 +183,7 @@ public class ClassifyFragment extends BaseRecyclerViewGridSizeFragment<ClassifyF
                         L.e("不需要保存文件到数据库");
                         return null;
                     }*/
-                    return classifyFileBeanDataList;
+                    return FileLoader.getAllFilesByExtensionName(getContext(), FILE_FILTER[mClassifyFlag], mClassifyFlag);
             }
         }
     }

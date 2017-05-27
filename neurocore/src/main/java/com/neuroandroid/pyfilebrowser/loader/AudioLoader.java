@@ -43,9 +43,10 @@ public class AudioLoader {
         fileBean.setTitle(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.AudioColumns.TITLE)));
         fileBean.setPath(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.AudioColumns.DATA)));
         fileBean.setSize(cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.AudioColumns.SIZE)));
-        fileBean.setDate(cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.AudioColumns.DATE_MODIFIED)));
         fileBean.setAlbumId(cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.AudioColumns.ALBUM_ID)));
         fileBean.setFile(new File(fileBean.getPath()));
+        // fileBean.setDate(cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.AudioColumns.DATE_MODIFIED)));
+        fileBean.setDate(fileBean.getFile().lastModified());
         fileBean.setClassifyFlag(ClassifyFragment.CLASSIFY_AUDIO);
         return fileBean;
     }
@@ -58,7 +59,7 @@ public class AudioLoader {
                             BaseColumns._ID,// 0
                             MediaStore.Audio.AudioColumns.TITLE,// 1
                             MediaStore.Audio.AudioColumns.SIZE,// 2
-                            MediaStore.Audio.AudioColumns.DATE_MODIFIED,// 3
+                            // MediaStore.Audio.AudioColumns.DATE_MODIFIED,// 3
                             MediaStore.Audio.AudioColumns.DATA,
                             MediaStore.Audio.AudioColumns.ALBUM_ID
                     }, selection, selectionValues, sortOrder);

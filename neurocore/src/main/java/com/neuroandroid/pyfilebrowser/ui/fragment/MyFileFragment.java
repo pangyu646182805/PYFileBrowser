@@ -3,12 +3,15 @@ package com.neuroandroid.pyfilebrowser.ui.fragment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.view.View;
+import android.widget.PopupMenu;
 
 import com.neuroandroid.pyfilebrowser.R;
 import com.neuroandroid.pyfilebrowser.adapter.MyFilePagerAdapter;
 import com.neuroandroid.pyfilebrowser.base.BaseFragment;
+import com.neuroandroid.pyfilebrowser.base.BaseRecyclerViewGridSizeFragment;
 import com.neuroandroid.pyfilebrowser.event.BaseEvent;
 import com.neuroandroid.pyfilebrowser.event.StorageEvent;
 import com.neuroandroid.pyfilebrowser.ui.activity.MainActivity;
@@ -72,7 +75,21 @@ public class MyFileFragment extends BaseFragment implements MainActivity.MainAct
         mSpinnerAction = new TitleBar.ImageAction(R.drawable.ic_more_vert_white) {
             @Override
             public void performAction(View view) {
+                PopupMenu popupMenu = new PopupMenu(mContext, mStatusBar, GravityCompat.END);
+                popupMenu.inflate(R.menu.menu_classify);
+                popupMenu.setOnMenuItemClickListener(menuItem -> {
+                    BaseRecyclerViewGridSizeFragment recyclerViewGridSizeFragment = (BaseRecyclerViewGridSizeFragment) getFragment(0);
+                    switch (menuItem.getItemId()) {
+                        case R.id.action_switch_display:
+                            handleGridSizeMenuItem(recyclerViewGridSizeFragment);
+                            break;
+                        case R.id.action_search:
 
+                            break;
+                    }
+                    return false;
+                });
+                popupMenu.show();
             }
         };
         mUpAction = new TitleBar.ImageAction(R.drawable.ic_action_up) {
@@ -107,6 +124,11 @@ public class MyFileFragment extends BaseFragment implements MainActivity.MainAct
 
             }
         };
+    }
+
+    private void handleGridSizeMenuItem(BaseRecyclerViewGridSizeFragment recyclerViewGridSizeFragment) {
+        int gridSize = recyclerViewGridSizeFragment.getGridSize();
+        recyclerViewGridSizeFragment.setGridSize(gridSize == 1 ? 2 : 1);
     }
 
     /**

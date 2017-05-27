@@ -13,7 +13,7 @@ import com.neuroandroid.pyfilebrowser.adapter.base.SelectAdapter;
 import com.neuroandroid.pyfilebrowser.bean.NormalListBean;
 import com.neuroandroid.pyfilebrowser.widget.NoPaddingTextView;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -25,11 +25,11 @@ import butterknife.ButterKnife;
 public class NormalListAdapter extends SelectAdapter<NormalListBean, NormalListAdapter.Holder> {
     private float mItemHeight;
 
-    public NormalListAdapter(Context context, List<NormalListBean> dataList) {
+    public NormalListAdapter(Context context, ArrayList<NormalListBean> dataList) {
         super(context, dataList);
     }
 
-    public NormalListAdapter(Context context, List<NormalListBean> dataList, float itemHeight) {
+    public NormalListAdapter(Context context, ArrayList<NormalListBean> dataList, float itemHeight) {
         super(context, dataList);
         this.mItemHeight = itemHeight;
     }

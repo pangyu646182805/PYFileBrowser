@@ -48,8 +48,9 @@ public class PhotoLoader {
         fileBean.setTitle(cursor.getString(cursor.getColumnIndex(MediaStore.Images.ImageColumns.TITLE)));
         fileBean.setPath(cursor.getString(cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA)));
         fileBean.setSize(cursor.getLong(cursor.getColumnIndex(MediaStore.Images.ImageColumns.SIZE)));
-        fileBean.setDate(cursor.getLong(cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATE_MODIFIED)));
         fileBean.setFile(new File(fileBean.getPath()));
+        // fileBean.setDate(cursor.getLong(cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATE_MODIFIED)));
+        fileBean.setDate(fileBean.getFile().lastModified());
         fileBean.setClassifyFlag(ClassifyFragment.CLASSIFY_PHOTO);
         return fileBean;
     }
@@ -62,7 +63,7 @@ public class PhotoLoader {
                             BaseColumns._ID,// 0
                             MediaStore.Images.ImageColumns.TITLE,// 1
                             MediaStore.Images.ImageColumns.SIZE,// 2
-                            MediaStore.Images.ImageColumns.DATE_MODIFIED,// 3
+                            // MediaStore.Images.ImageColumns.DATE_MODIFIED,// 3
                             MediaStore.Images.ImageColumns.DATA,// 5
 
                     }, selection, selectionValues, sortOrder);

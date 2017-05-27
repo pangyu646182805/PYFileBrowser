@@ -32,7 +32,7 @@ public abstract class BaseRecyclerViewGridSizeFragment<ADAPTER extends SelectAda
         // only recreate the adapter and layout manager if the layout currentLayoutRes has changed
         if (oldItemType != getItemType()) {
             invalidateLayoutManager();
-            invalidateAdapter(new ArrayList<>());
+            invalidateAdapter(getAdapter().getDataList() == null ? new ArrayList<>() : getAdapter().getDataList());
             invalidateListener();
         } else {
             setGridSize(gridSize);

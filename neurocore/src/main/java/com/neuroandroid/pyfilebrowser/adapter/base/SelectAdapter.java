@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import com.neuroandroid.pyfilebrowser.annotation.SelectMode;
 import com.neuroandroid.pyfilebrowser.bean.ISelect;
 import com.neuroandroid.pyfilebrowser.listener.OnItemClickListener;
+import com.neuroandroid.pyfilebrowser.listener.OnItemLongClickListener;
 import com.neuroandroid.pyfilebrowser.utils.L;
 
 import java.util.ArrayList;
@@ -26,7 +27,9 @@ public abstract class SelectAdapter<T extends ISelect, VH extends RecyclerView.V
     private int mCurrentMode = ISelect.SINGLE_MODE;
     private int mPrePos;
     public boolean isSelectMode = true;
+    private boolean longTouchEnable = true;
     private OnItemClickListener<T> mItemClickListener;
+    private OnItemLongClickListener<T> mItemLongClickListener;
     private ISelect.OnItemSelectedListener<T> mItemSelectedListener;
     protected Context mContext;
     private float mItemHeight;
@@ -35,12 +38,12 @@ public abstract class SelectAdapter<T extends ISelect, VH extends RecyclerView.V
         return mItemHeight;
     }
 
-    public SelectAdapter(Context context, List<T> dataList) {
+    public SelectAdapter(Context context, ArrayList<T> dataList) {
         mContext = context;
         mDataList = dataList;
     }
 
-    public SelectAdapter(Context context, List<T> dataList, float itemHeight) {
+    public SelectAdapter(Context context, ArrayList<T> dataList, float itemHeight) {
         this(context, dataList);
         this.mItemHeight = itemHeight;
     }
@@ -73,6 +76,10 @@ public abstract class SelectAdapter<T extends ISelect, VH extends RecyclerView.V
         mItemClickListener = itemClickListener;
     }
 
+    public void setItemLongClickListener(OnItemLongClickListener<T> itemLongClickListener) {
+        mItemLongClickListener = itemLongClickListener;
+    }
+
     public void setCheckedPos(int prePos) {
         mPrePos = prePos;
     }
@@ -83,16 +90,35 @@ public abstract class SelectAdapter<T extends ISelect, VH extends RecyclerView.V
         }
     }
 
-    protected List<T> mDataList = new ArrayList<T>();
+    protected ArrayList<T> mDataList = new ArrayList<T>();
     private final HashSet<T> selectedBeans = new HashSet<>();
+
+    public ArrayList<T> getDataList() {
+        return mDataList;
+    }
+
+    public boolean isSelectMode() {
+        return isSelectMode;
+    }
 
     /**
      * 更新选择模式
      */
     public void updateSelectMode(boolean isSelect) {
+        updateSelectMode(isSelect, -1);
+    }
+
+    /**
+     * 更新选择模式
+     * 如果position不等于-1则勾选position
+     */
+    public void updateSelectMode(boolean isSelect, int position) {
         if (isSelectMode != isSelect) {
             isSelectMode = isSelect;
-            // resetData();
+            clearSelected();
+            if (position != -1) {
+                mDataList.get(position).setSelected(true);
+            }
             notifyDataSetChanged();
         }
     }
@@ -100,7 +126,7 @@ public abstract class SelectAdapter<T extends ISelect, VH extends RecyclerView.V
     /**
      * 清除选择
      */
-    private void clearSelect() {
+    private void clearSelected() {
         for (ISelect bean : mDataList) {
             bean.setSelected(false);
         }
@@ -108,6 +134,10 @@ public abstract class SelectAdapter<T extends ISelect, VH extends RecyclerView.V
 
     public void setSelectedMode(@SelectMode int mode) {
         mCurrentMode = mode;
+    }
+
+    public void longTouchSelectModeEnable(boolean longTouchSelectModeEnable) {
+        longTouchEnable = longTouchSelectModeEnable;
     }
 
     @Override
@@ -118,8 +148,27 @@ public abstract class SelectAdapter<T extends ISelect, VH extends RecyclerView.V
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         holder.itemView.setOnClickListener(view -> performClick(view, position));
+        holder.itemView.setOnLongClickListener(view -> {
+            performLongClick(view, position);
+            return true;
+        });
         // holder.itemView.setBackgroundResource(R.drawable.dialog_item_selector);
         onBindItemViewHolder((VH) holder, position);
+    }
+
+    private void performLongClick(View itemView, int position) {
+        if (longTouchEnable) {
+            final T testBean = mDataList.get(position);
+            updateSelectMode(true);
+            testBean.setSelected(!testBean.isSelected());
+            dispatchSelected(itemView, position, testBean, testBean.isSelected());
+            notifyItemChanged(position);
+            mPrePos = position;
+        } else {
+            if (mItemLongClickListener != null) {
+                mItemLongClickListener.onItemLongClick(itemView, position, mDataList.get(position));
+            }
+        }
     }
 
     public void performClick(View itemView, int position) {
@@ -195,6 +244,9 @@ public abstract class SelectAdapter<T extends ISelect, VH extends RecyclerView.V
             selectedBeans.add(bean);
         } else {
             selectedBeans.remove(bean);
+            if (mItemSelectedListener != null && selectedBeans.isEmpty()) {
+                mItemSelectedListener.onNothingSelected();
+            }
         }
         if (mItemSelectedListener != null) {
             mItemSelectedListener.onItemSelected(itemView, position, isSelected, bean);
@@ -213,7 +265,7 @@ public abstract class SelectAdapter<T extends ISelect, VH extends RecyclerView.V
         notifyDataSetChanged();
     }
 
-    public void replaceAll(List<T> dataList) {
+    public void replaceAll(ArrayList<T> dataList) {
         this.mDataList = dataList;
         notifyDataSetChanged();
     }
