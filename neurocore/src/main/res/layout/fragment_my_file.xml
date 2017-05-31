@@ -67,5 +67,10 @@
         </android.support.design.widget.CoordinatorLayout>
     </LinearLayout>
 
+    <FrameLayout
+        android:id="@+id/fl_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
     <include layout="@layout/layout_loading_common"/>
 </FrameLayout>

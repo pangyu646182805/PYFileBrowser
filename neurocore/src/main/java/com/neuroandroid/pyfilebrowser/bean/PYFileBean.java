@@ -4,11 +4,12 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 
 import java.io.File;
+import java.io.Serializable;
 
 /**
  * Created by NeuroAndroid on 2017/5/24.
  */
-public class PYFileBean implements ISelect {
+public class PYFileBean implements ISelect, Serializable {
     private boolean selected;
 
     private int id;

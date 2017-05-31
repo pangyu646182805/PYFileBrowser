@@ -159,9 +159,15 @@ public class ClassifyFileAdapter extends SelectAdapter<PYFileBean, ClassifyFileA
                 mTvDesc.setText(Formatter.formatFileSize(mContext, classifyFileBean.getSize()));
         }
 
-        private void loadImage(PYFileBean classifyFileBean, int errorImg) {
-            MediaGlideRequest.Builder.from(Glide.with(mContext), classifyFileBean, errorImg)
-                    .asBitmap().build(mContext).into(new MediaGlideTarget(mIvImg) {
+        private void loadImage(PYFileBean pyFileBean, int errorImg) {
+            int width;
+            if (mCurrentType == TYPE_LIST) {
+                width = (int) UIUtils.getDimen(R.dimen.x88);
+            } else {
+                width = SystemUtils.getScreenWidth((Activity) mContext) / 2;
+            }
+            MediaGlideRequest.Builder.from(Glide.with(mContext), pyFileBean, errorImg)
+                    .asBitmap().build(mContext, width).into(new MediaGlideTarget(mIvImg) {
                 @Override
                 public void onReady(int loadFlag) {
                     if (mCurrentType == TYPE_GRID) {

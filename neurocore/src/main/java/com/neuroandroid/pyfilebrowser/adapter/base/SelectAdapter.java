@@ -132,6 +132,15 @@ public abstract class SelectAdapter<T extends ISelect, VH extends RecyclerView.V
         }
     }
 
+    /**
+     * 全选
+     */
+    public void selectAll() {
+        for (ISelect bean : mDataList) {
+            bean.setSelected(true);
+        }
+    }
+
     public void setSelectedMode(@SelectMode int mode) {
         mCurrentMode = mode;
     }

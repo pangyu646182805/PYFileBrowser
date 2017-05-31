@@ -1390,6 +1390,18 @@ public class FileUtils {
         }
     }
 
+    public static String getPhotoThumbnail(Context context, int imageId) {
+        Cursor query = context.getContentResolver().query(MediaStore.Images.Thumbnails.EXTERNAL_CONTENT_URI,
+                new String[]{MediaStore.Images.Thumbnails.DATA},
+                "image_id=" + imageId, null, MediaStore.Images.Thumbnails.DEFAULT_SORT_ORDER);
+        if (query.getCount() != 0) {
+            query.moveToFirst();
+            return query.getString(query.getColumnIndex(MediaStore.Video.Thumbnails.DATA));
+        } else {
+            return "";
+        }
+    }
+
     public static Drawable getApkIcon(Context context, String apkPath) {
         PackageManager pm = context.getPackageManager();
         PackageInfo info = pm.getPackageArchiveInfo(apkPath,

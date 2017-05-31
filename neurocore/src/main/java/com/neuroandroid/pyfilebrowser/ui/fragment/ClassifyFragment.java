@@ -101,30 +101,45 @@ public class ClassifyFragment extends BaseRecyclerViewGridSizeFragment<ClassifyF
         hideLoading();
         if (data != null) {
             invalidateAdapter(data);
-            getAdapter().setItemClickListener((view, position, pyFileBean) -> FileUtils.openSelectFile(mContext, pyFileBean.getFile()));
-            getAdapter().setItemLongClickListener((view, position, song) -> {
-                if (!getAdapter().isSelectMode()) {
-                    getAdapter().updateSelectMode(true, position);
-                }
-            });
-            getAdapter().setItemSelectedListener(new ISelect.OnItemSelectedListener<PYFileBean>() {
-                @Override
-                public void onItemSelected(View view, int position, boolean isSelected, PYFileBean pyFileBean) {
-                    if (isSelected) {
-                        mSelectedDataList.add(pyFileBean);
-                    } else {
-                        mSelectedDataList.remove(pyFileBean);
-                    }
-                    EventBus.getDefault().post(new SelectedEvent<PYFileBean>().setSelectedBeans(mSelectedDataList));
-                }
-
-                @Override
-                public void onNothingSelected() {
-                    // 一个条目都没有被选择则取消多选模式
-                    getAdapter().updateSelectMode(false);
-                }
-            });
+            invalidateListener();
         }
+    }
+
+    @Override
+    protected void invalidateListener() {
+        getAdapter().setItemClickListener((view, position, pyFileBean) -> {
+            if (mCurrentClassifyFlag == CLASSIFY_PHOTO) {
+                MyFileFragment myFileFragment = (MyFileFragment) getParentFragment();
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("photo_gallery", getAdapter().getDataList());
+                bundle.putInt("current_position", position);
+                myFileFragment.replaceFragment(bundle);
+            } else {
+                FileUtils.openSelectFile(mContext, pyFileBean.getFile());
+            }
+        });
+        getAdapter().setItemLongClickListener((view, position, song) -> {
+            if (!getAdapter().isSelectMode()) {
+                getAdapter().updateSelectMode(true, position);
+            }
+        });
+        getAdapter().setItemSelectedListener(new ISelect.OnItemSelectedListener<PYFileBean>() {
+            @Override
+            public void onItemSelected(View view, int position, boolean isSelected, PYFileBean pyFileBean) {
+                if (isSelected) {
+                    mSelectedDataList.add(pyFileBean);
+                } else {
+                    mSelectedDataList.remove(pyFileBean);
+                }
+                EventBus.getDefault().post(new SelectedEvent<PYFileBean>().setSelectedBeans(mSelectedDataList));
+            }
+
+            @Override
+            public void onNothingSelected() {
+                // 一个条目都没有被选择则取消多选模式
+                getAdapter().updateSelectMode(false);
+            }
+        });
     }
 
     @Override
@@ -132,6 +147,12 @@ public class ClassifyFragment extends BaseRecyclerViewGridSizeFragment<ClassifyF
         super.clearSelected();
         // 清除被选中的集合
         if (mSelectedDataList.size() > 0) mSelectedDataList.clear();
+    }
+
+    public void selectAll() {
+        super.selectAll();
+        mSelectedDataList = new ArrayList<>(getAdapter().getDataList());
+        EventBus.getDefault().post(new SelectedEvent<PYFileBean>().setSelectedBeans(mSelectedDataList));
     }
 
     @Override

@@ -45,6 +45,7 @@ public class PhotoLoader {
 
     private static PYFileBean getPhotoFromCursorImpl(Cursor cursor) {
         PYFileBean fileBean = new PYFileBean();
+        fileBean.setId(cursor.getInt(cursor.getColumnIndex(BaseColumns._ID)));
         fileBean.setTitle(cursor.getString(cursor.getColumnIndex(MediaStore.Images.ImageColumns.TITLE)));
         fileBean.setPath(cursor.getString(cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA)));
         fileBean.setSize(cursor.getLong(cursor.getColumnIndex(MediaStore.Images.ImageColumns.SIZE)));

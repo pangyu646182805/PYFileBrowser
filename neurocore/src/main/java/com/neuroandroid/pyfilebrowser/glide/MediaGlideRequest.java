@@ -45,13 +45,13 @@ public class MediaGlideRequest {
             return new BitmapBuilder(this, mErrorImage);
         }
 
-        public DrawableRequestBuilder<GlideDrawable> build(Context context) {
+        public DrawableRequestBuilder<GlideDrawable> build(Context context, int width) {
             //noinspection unchecked
             return createBaseRequest(context, requestManager, mClassifyFileBean)
                     .diskCacheStrategy(DEFAULT_DISK_CACHE_STRATEGY)
                     .error(mErrorImage)
                     .placeholder(mErrorImage)
-                    .override(100, 100)
+                    .override(width, width)
                     .animate(DEFAULT_ANIMATION)
                     .signature(createSignature(mClassifyFileBean));
         }
@@ -66,29 +66,39 @@ public class MediaGlideRequest {
             this.mErrorImage = errorImage;
         }
 
-        public BitmapRequestBuilder<?, Bitmap> build(Context context) {
+        public BitmapRequestBuilder<?, Bitmap> build(Context context, int width) {
             //noinspection unchecked
+            if (width == -1) {
+                return createBaseRequest(context, builder.requestManager, builder.mClassifyFileBean)
+                        .asBitmap()
+                        .diskCacheStrategy(DEFAULT_DISK_CACHE_STRATEGY)
+                        .error(mErrorImage)
+                        .placeholder(mErrorImage)
+                        .animate(DEFAULT_ANIMATION)
+                        .signature(createSignature(builder.mClassifyFileBean));
+            }
             return createBaseRequest(context, builder.requestManager, builder.mClassifyFileBean)
                     .asBitmap()
                     .diskCacheStrategy(DEFAULT_DISK_CACHE_STRATEGY)
                     .error(mErrorImage)
                     .placeholder(mErrorImage)
-                    .override(100, 100)
+                    .override(width, width)
                     .animate(DEFAULT_ANIMATION)
                     .signature(createSignature(builder.mClassifyFileBean));
         }
     }
 
     public static DrawableTypeRequest createBaseRequest(Context context, RequestManager requestManager,
-                                                        PYFileBean classifyFileBean) {
-        switch (classifyFileBean.getClassifyFlag()) {
+                                                        PYFileBean pyFileBean) {
+        switch (pyFileBean.getClassifyFlag()) {
             case ClassifyFragment.CLASSIFY_AUDIO:
-                return requestManager.load(getMediaStoreAlbumCoverUri(classifyFileBean.getAlbumId()));
+                return requestManager.load(getMediaStoreAlbumCoverUri(pyFileBean.getAlbumId()));
             case ClassifyFragment.CLASSIFY_VIDEO:
-                return requestManager.load(FileUtils.getVideoThumbnail(context, classifyFileBean.getId()));
+                return requestManager.load(FileUtils.getVideoThumbnail(context, pyFileBean.getId()));
             case ClassifyFragment.CLASSIFY_PHOTO:
             default:
-                return requestManager.load(classifyFileBean.getFile());
+                // return requestManager.load(FileUtils.getPhotoThumbnail(context, classifyFileBean.getId()));
+                return requestManager.load(pyFileBean.getFile());
         }
     }
 

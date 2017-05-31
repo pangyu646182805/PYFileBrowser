@@ -3,12 +3,14 @@ package com.neuroandroid.pyfilebrowser.ui.fragment;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.PopupMenu;
 
 import com.neuroandroid.pyfilebrowser.R;
@@ -22,6 +24,7 @@ import com.neuroandroid.pyfilebrowser.event.SelectedEvent;
 import com.neuroandroid.pyfilebrowser.event.StorageEvent;
 import com.neuroandroid.pyfilebrowser.ui.activity.MainActivity;
 import com.neuroandroid.pyfilebrowser.utils.FileUtils;
+import com.neuroandroid.pyfilebrowser.utils.FragmentUtils;
 import com.neuroandroid.pyfilebrowser.utils.L;
 import com.neuroandroid.pyfilebrowser.utils.ShowUtils;
 import com.neuroandroid.pyfilebrowser.utils.UIUtils;
@@ -52,6 +55,8 @@ public class MyFileFragment extends BaseFragment implements MainActivity.MainAct
     TabLayout mTabs;
     @BindView(R.id.btn_add)
     FloatingActionButton mBtnAdd;
+    @BindView(R.id.fl_container)
+    FrameLayout mFlContainer;
 
     private TitleBar.ImageAction mMenuAction;
     private TitleBar.ImageAction mSpinnerAction;
@@ -64,6 +69,8 @@ public class MyFileFragment extends BaseFragment implements MainActivity.MainAct
     private TitleBar.ImageAction mCloseAction;
     private TitleBar.ImageAction mDelAction;
     private TitleBar.ImageAction mCopyAction;
+
+    private BaseFragment mContainerFragment;
 
     public static MyFileFragment newInstance() {
         return new MyFileFragment();
@@ -104,6 +111,9 @@ public class MyFileFragment extends BaseFragment implements MainActivity.MainAct
                             break;
                         case R.id.action_search:
 
+                            break;
+                        case R.id.action_select_all:
+                            recyclerViewGridSizeFragment.selectAll();
                             break;
                     }
                     return false;
@@ -323,11 +333,22 @@ public class MyFileFragment extends BaseFragment implements MainActivity.MainAct
         recyclerViewFragment.clearSelected();
     }
 
+    public void replaceFragment(Bundle bundle) {
+        mContainerFragment = PhotoGalleryFragment.newInstance(bundle);
+        FragmentUtils.replaceFragment(getChildFragmentManager(), mContainerFragment, R.id.fl_container, true);
+    }
+
     /**
      * 处理返回事件
      */
     @Override
     public boolean handleBackPress() {
+        if (mContainerFragment != null) {
+            // FragmentUtils.removeFragment(mContainerFragment);
+            FragmentUtils.popFragment(getChildFragmentManager());
+            mContainerFragment = null;
+            return true;
+        }
         switch (mVpContent.getCurrentItem()) {
             case 0:
                 if (selectedMenuOpen) {

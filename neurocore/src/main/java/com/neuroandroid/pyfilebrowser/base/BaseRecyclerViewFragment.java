@@ -201,6 +201,12 @@ public abstract class BaseRecyclerViewFragment<ADAPTER extends SelectAdapter, LM
         getAdapter().updateSelectMode(false);
     }
 
+    public void selectAll() {
+        getAdapter().selectAll();
+        getAdapter().notifyDataSetChanged();
+        getAdapter().updateSelectMode(true);
+    }
+
     protected abstract LM createLayoutManager();
 
     @NonNull
