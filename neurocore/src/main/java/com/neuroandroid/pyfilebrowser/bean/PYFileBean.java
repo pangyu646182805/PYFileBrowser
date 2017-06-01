@@ -1,5 +1,6 @@
 package com.neuroandroid.pyfilebrowser.bean;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 
@@ -27,6 +28,11 @@ public class PYFileBean implements ISelect, Serializable {
     private int albumId;
     // apk缩略图
     private Drawable appIcon;
+    // app包名
+    private String packName;
+    // app版本号
+    private String version;
+    private Intent appIntent;
 
     public PYFileBean() {
     }
@@ -46,6 +52,30 @@ public class PYFileBean implements ISelect, Serializable {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public Intent getAppIntent() {
+        return appIntent;
+    }
+
+    public void setAppIntent(Intent appIntent) {
+        this.appIntent = appIntent;
+    }
+
+    public String getPackName() {
+        return packName;
+    }
+
+    public void setPackName(String packName) {
+        this.packName = packName;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
     }
 
     public Bitmap getThumbnail() {

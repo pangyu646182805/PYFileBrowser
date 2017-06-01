@@ -115,48 +115,48 @@ public class ClassifyFileAdapter extends SelectAdapter<PYFileBean, ClassifyFileA
             ButterKnife.bind(this, itemView);
         }
 
-        public void onBindAudio(PYFileBean classifyFileBean) {
+        public void onBindAudio(PYFileBean pyFileBean) {
             // ImageLoader.getInstance().displayImageFromAlbumId(mContext, classifyFileBean.getAlbumId(), R.mipmap.ic_type_audio, mIvImg);
-            loadImage(classifyFileBean, R.mipmap.ic_type_audio);
-            setText(classifyFileBean);
+            loadImage(pyFileBean, R.mipmap.ic_type_audio);
+            setText(pyFileBean);
         }
 
-        public void onBindVideo(PYFileBean classifyFileBean) {
+        public void onBindVideo(PYFileBean pyFileBean) {
             // ImageLoader.getInstance().displayImage(mContext, FileUtils.getVideoPath(mContext, classifyFileBean.getId()), R.mipmap.ic_type_video, mIvImg);
-            loadImage(classifyFileBean, R.mipmap.ic_type_video);
-            setText(classifyFileBean);
+            loadImage(pyFileBean, R.mipmap.ic_type_video);
+            setText(pyFileBean);
         }
 
-        public void onBindPhoto(PYFileBean classifyFileBean) {
+        public void onBindPhoto(PYFileBean pyFileBean) {
             // ImageLoader.getInstance().displayImage(mContext, classifyFileBean.getPath(), R.mipmap.ic_type_photo, mIvImg);
-            loadImage(classifyFileBean, R.mipmap.ic_type_photo);
-            setText(classifyFileBean);
+            loadImage(pyFileBean, R.mipmap.ic_type_photo);
+            setText(pyFileBean);
         }
 
-        public void onBindDoc(PYFileBean classifyFileBean) {
+        public void onBindDoc(PYFileBean pyFileBean) {
             mIvImg.setBackgroundResource(R.mipmap.ic_type_doc);
-            setText(classifyFileBean);
+            setText(pyFileBean);
         }
 
-        public void onBindApk(PYFileBean classifyFileBean) {
-            if (classifyFileBean.getAppIcon() == null) {
+        public void onBindApk(PYFileBean pyFileBean) {
+            if (pyFileBean.getAppIcon() == null) {
                 mIvImg.setBackgroundResource(R.mipmap.ic_type_apk);
             } else {
-                mIvImg.setImageDrawable(classifyFileBean.getAppIcon());
+                mIvImg.setImageDrawable(pyFileBean.getAppIcon());
             }
-            setText(classifyFileBean);
+            setText(pyFileBean);
         }
 
-        public void onBindZip(PYFileBean classifyFileBean) {
+        public void onBindZip(PYFileBean pyFileBean) {
             mIvImg.setBackgroundResource(R.mipmap.ic_type_zip);
-            setText(classifyFileBean);
+            setText(pyFileBean);
         }
 
-        private void setText(PYFileBean classifyFileBean) {
-            mTvTitle.setText(classifyFileBean.getTitle());
-            mTvSubTitle.setText(TimeUtils.millis2String(classifyFileBean.getDate(), "yyyy/MM/dd hh:mm"));
+        private void setText(PYFileBean pyFileBean) {
+            mTvTitle.setText(pyFileBean.getTitle());
+            mTvSubTitle.setText(TimeUtils.millis2String(pyFileBean.getDate(), "yyyy/MM/dd hh:mm"));
             if (mTvDesc != null)
-                mTvDesc.setText(Formatter.formatFileSize(mContext, classifyFileBean.getSize()));
+                mTvDesc.setText(Formatter.formatFileSize(mContext, pyFileBean.getSize()));
         }
 
         private void loadImage(PYFileBean pyFileBean, int errorImg) {

@@ -41,6 +41,7 @@ public class ClassifyFragment extends BaseRecyclerViewGridSizeFragment<ClassifyF
     public static final int CLASSIFY_ZIP = 5;
     public static final int CLASSIFY_DOWNLOAD = 6;
     public static final int CLASSIFY_COLLECTION = 7;
+    public static final int CLASSIFY_MY_APP = 8;
     private int mCurrentClassifyFlag = CLASSIFY_AUDIO;
     private ArrayList<PYFileBean> mSelectedDataList = new ArrayList<>();
 

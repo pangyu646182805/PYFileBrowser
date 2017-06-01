@@ -64,7 +64,8 @@ public class PhotoGalleryFragment extends BaseFragment implements RecyclerViewPa
         initLeftAction(new TitleBar.ImageAction(R.drawable.ic_arrow_back) {
             @Override
             public void performAction(View view) {
-
+                MyFileFragment myFileFragment = (MyFileFragment) getParentFragment();
+                myFileFragment.handleBackPress();
             }
         });
 
