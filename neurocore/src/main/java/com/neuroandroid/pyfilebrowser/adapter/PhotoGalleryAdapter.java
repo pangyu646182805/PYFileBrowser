@@ -44,7 +44,6 @@ public class PhotoGalleryAdapter extends BaseRvAdapter<PYFileBean, PhotoGalleryA
             super(itemView);
             mIvImg = ButterKnife.findById(itemView, R.id.iv_img);
             mIvImg.setMaxScale(8f);
-            mIvImg.setMinScale(0.8f);
             mIvImg.setOnPhotoTapListener((view, x, y) -> {
                 if (mItemClickListener != null) {
                     mItemClickListener.onItemClick(view, getLayoutPosition(), getItem(getLayoutPosition()));

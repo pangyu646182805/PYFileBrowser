@@ -1,17 +1,20 @@
 package com.neuroandroid.pyfilebrowser.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.Formatter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 
 import com.neuroandroid.pyfilebrowser.R;
 import com.neuroandroid.pyfilebrowser.adapter.base.BaseRvAdapter;
 import com.neuroandroid.pyfilebrowser.bean.PYFileBean;
 import com.neuroandroid.pyfilebrowser.utils.TimeUtils;
+import com.neuroandroid.pyfilebrowser.utils.UIUtils;
 import com.neuroandroid.pyfilebrowser.widget.NoPaddingTextView;
 
 import java.util.List;
@@ -62,6 +65,20 @@ public class MyAppAdapter extends BaseRvAdapter<PYFileBean, MyAppAdapter.Holder>
                 mIvImg.setImageDrawable(pyFileBean.getAppIcon());
             }
             setText(pyFileBean);
+            mIvMenu.setOnClickListener(view -> {
+                PopupMenu popupMenu = new PopupMenu(mContext, view);
+                popupMenu.inflate(R.menu.menu_my_app);
+                popupMenu.setOnMenuItemClickListener(menuItem -> {
+                    switch (menuItem.getItemId()) {
+                        case R.id.action_open_app:
+                            Intent appIntent = pyFileBean.getAppIntent();
+                            if (appIntent != null) UIUtils.toLayout(appIntent);
+                            break;
+                    }
+                    return false;
+                });
+                popupMenu.show();
+            });
         }
 
         private void setText(PYFileBean pyFileBean) {
