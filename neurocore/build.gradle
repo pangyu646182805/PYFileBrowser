@@ -1,10 +1,10 @@
 apply plugin: 'com.android.application'
-apply plugin: 'android-apt'
-apply plugin: 'me.tatarka.retrolambda'
+// apply plugin: 'android-apt'
+// apply plugin: 'me.tatarka.retrolambda'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    compileSdkVersion 26
+    buildToolsVersion "26.0.2"
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -15,7 +15,7 @@ android {
         vectorDrawables.useSupportLibrary = true
         applicationId "com.neuroandroid.pyfilebrowser"
         minSdkVersion 19
-        targetSdkVersion 25
+        targetSdkVersion 26
         versionCode 1
         versionName "1.0"
 
@@ -43,7 +43,7 @@ dependencies {
     // eventbus
     compile 'org.greenrobot:eventbus:3.0.0'
     // butterknife
-    apt 'com.jakewharton:butterknife-compiler:8.2.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.2.1'
     compile 'com.jakewharton:butterknife:8.2.1'
     // 沉浸式状态栏相关
     compile 'com.readystatesoftware.systembartint:systembartint:1.0.3'

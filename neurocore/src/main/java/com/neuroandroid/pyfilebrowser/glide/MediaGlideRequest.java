@@ -17,6 +17,7 @@ import com.bumptech.glide.signature.MediaStoreSignature;
 import com.neuroandroid.pyfilebrowser.bean.PYFileBean;
 import com.neuroandroid.pyfilebrowser.ui.fragment.ClassifyFragment;
 import com.neuroandroid.pyfilebrowser.utils.FileUtils;
+import com.neuroandroid.pyfilebrowser.utils.L;
 
 /**
  * Created by NeuroAndroid on 2017/5/26.
@@ -94,7 +95,9 @@ public class MediaGlideRequest {
             case ClassifyFragment.CLASSIFY_AUDIO:
                 return requestManager.load(getMediaStoreAlbumCoverUri(pyFileBean.getAlbumId()));
             case ClassifyFragment.CLASSIFY_VIDEO:
-                return requestManager.load(FileUtils.getVideoThumbnail(context, pyFileBean.getId()));
+                String videoThumbnail = FileUtils.getVideoThumbnail(context, pyFileBean.getId());
+                L.e("videoThumbnail --> " + videoThumbnail);
+                return requestManager.load(videoThumbnail);
             case ClassifyFragment.CLASSIFY_PHOTO:
             default:
                 // return requestManager.load(FileUtils.getPhotoThumbnail(context, classifyFileBean.getId()));

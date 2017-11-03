@@ -40,9 +40,9 @@
 
     <style name="custom_dialog_anim" parent="@android:style/Animation.Dialog">
         <!-- 进入时的动画 -->
-        <item name="@android:windowEnterAnimation">@anim/anim_enter</item>
+        <item name="android:windowEnterAnimation">@anim/anim_enter</item>
         <!-- 退出时的动画 -->
-        <item name="@android:windowExitAnimation">@anim/anim_exit</item>
+        <item name="android:windowExitAnimation">@anim/anim_exit</item>
     </style>
 
     <style name="TRM_ANIM_STYLE">
